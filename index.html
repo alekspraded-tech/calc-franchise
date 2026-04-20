@@ -3,54 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор паушального взноса</title>
+    <title>Дашборд партнёра: Расчёты и Сроки</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f7f6; 
-            padding: 20px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            min-height: 100vh;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
+            padding: 20px;
+            color: #333;
         }
-        .calculator { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            max-width: 500px; 
-            width: 100%; 
+        .dashboard-header {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
         }
-        h2 { 
-            text-align: center; 
-            color: #2c3e50; 
-            margin-top: 0; 
-            margin-bottom: 25px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        .form-group { 
-            margin-bottom: 20px; 
+        .top-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
-        label { 
-            display: block; 
-            margin-bottom: 8px; 
-            color: #555; 
-            font-weight: 600; 
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 320px;
         }
-        input[type="number"] { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ccd1d9; 
-            border-radius: 6px; 
-            box-sizing: border-box; 
-            font-size: 16px; 
+        .card.full-width {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        /* Стили для форм */
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            flex: 1;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+        input[type="number"], input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccd1d9;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
             transition: border-color 0.3s;
+            font-family: inherit;
         }
-        input[type="number"]:focus { 
-            border-color: #3498db; 
-            outline: none; 
+        input:focus {
+            border-color: #3498db;
+            outline: none;
         }
+        
+        /* Стили для чекбоксов */
         .checkbox-group {
             display: flex;
             align-items: center;
@@ -61,9 +93,9 @@
             border: 1px solid #e1e8ed;
         }
         .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
             cursor: pointer;
         }
         .checkbox-group label {
@@ -71,165 +103,334 @@
             font-weight: normal;
             cursor: pointer;
             width: 100%;
+            font-size: 14px;
         }
+
+        /* Инфоблок */
         .benefits-info {
             background-color: #e8f4fd;
             border-left: 4px solid #3498db;
-            padding: 15px;
+            padding: 12px;
             margin-bottom: 20px;
             border-radius: 0 6px 6px 0;
-            font-size: 14px;
+            font-size: 13px;
             color: #2c3e50;
         }
-        .benefits-info strong {
-            display: block;
-            margin-bottom: 8px;
-            color: #2980b9;
+        .benefits-info strong { color: #2980b9; }
+
+        /* Результаты финансов */
+        .results-block {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
         }
-        .benefits-info ul {
-            margin: 0;
-            padding-left: 20px;
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
         }
-        .benefits-info li {
-            margin-bottom: 6px;
-        }
-        .benefits-info li:last-child {
-            margin-bottom: 0;
-        }
-        .results { 
-            margin-top: 25px; 
-            padding-top: 20px; 
-            border-top: 1px solid #eee; 
-        }
-        .result-row { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 12px; 
-            color: #555; 
-            font-size: 15px;
-        }
-        .result-row.discounted-base {
+        .result-row.discounted {
             color: #27ae60;
             font-weight: 600;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 1px dashed #ccc;
-            margin-bottom: 15px;
         }
-        .result-row span:last-child {
+        .result-row span:last-child { font-weight: 600; }
+        .result-row.total {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-top: 15px;
+            border-top: 2px solid #2c3e50;
+            padding-top: 12px;
+        }
+
+        /* Блок метрики сроков */
+        .header-metric {
+            background: #4a1531;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header-metric h3 { margin: 0; font-size: 16px; font-weight: 500; border: none; padding: 0;}
+        .header-metric .value { font-size: 24px; font-weight: bold; }
+
+        /* Таблица */
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        th {
+            background-color: #f8f9fa;
             font-weight: 600;
-        }
-        .result-row.total { 
-            font-weight: bold; 
-            font-size: 1.3em; 
-            color: #2c3e50; 
-            margin-top: 20px; 
-            border-top: 2px solid #2c3e50; 
-            padding-top: 15px; 
+            color: #2c3e50;
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
 
-    <div class="calculator">
-        <h2>Расчет паушального взноса</h2>
+    <h1 class="dashboard-header">Дашборд партнёра</h1>
+
+    <div class="container">
         
-        <div class="form-group">
-            <label for="basePrice">Стоимость пауша (базовая) (₽):</label>
-            <input type="number" id="basePrice" placeholder="Например, 1 500 000" min="0" oninput="calculate()">
-        </div>
-        
-        <div class="form-group">
-            <label for="vatRate">Ставка НДС (%):</label>
-            <input type="number" id="vatRate" value="22" min="0" max="100" oninput="calculate()">
-        </div>
+        <div class="top-row">
+            <div class="card">
+                <h2>1. Паушальный взнос</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Базовая стоимость (₽)</label>
+                        <input type="number" id="basePrice" value="1500000" min="0" oninput="calculateAll()">
+                    </div>
+                    <div class="form-group">
+                        <label>Ставка НДС (%)</label>
+                        <input type="number" id="vatRate" value="20" min="0" max="100" oninput="calculateAll()">
+                    </div>
+                </div>
 
-        <div class="benefits-info">
-            <strong>Описание льгот:</strong>
-            <ul>
-                <li>При открытии второй и последующих точек партнёром, скидка <strong>25%</strong> на паушальный взнос.</li>
-                <li>При открытии робот-мойки «Портал» в городе, где нет ни одной точки бренда, стоимость паушального взноса <strong>1 000 000 рублей</strong>.</li>
-            </ul>
-        </div>
+                <div class="benefits-info">
+                    <strong>Льготы:</strong> Скидка 25% со второй точки. Если в городе нет "Портала", взнос фиксируется на 1 000 000 ₽.
+                </div>
 
-        <div class="checkbox-group">
-            <input type="checkbox" id="isNewPartner" checked onchange="calculate()">
-            <label for="isNewPartner">Новый партнёр сети</label>
-        </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="isNewPartner" checked onchange="calculateAll()">
+                    <label for="isNewPartner">Новый партнёр сети</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="hasPortal" checked onchange="calculateAll()">
+                    <label for="hasPortal">В городе есть точка «Портал»</label>
+                </div>
 
-        <div class="checkbox-group">
-            <input type="checkbox" id="hasPortal" checked onchange="calculate()">
-            <label for="hasPortal">В городе есть точка «Портал»</label>
-        </div>
-
-        <div class="results">
-            <div class="result-row discounted-base">
-                <span>Сумма с учетом льгот:</span>
-                <span id="discountedBaseRes">0.00 ₽</span>
+                <div class="results-block">
+                    <div class="result-row discounted">
+                        <span>Сумма с учетом льгот:</span>
+                        <span id="discountedBaseRes">0.00 ₽</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Ноу-хау (80% — без НДС):</span>
+                        <span id="knowHowRes">0.00 ₽</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Облагаемая база (20%):</span>
+                        <span id="taxableRes">0.00 ₽</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Сумма НДС:</span>
+                        <span id="vatAmountRes">0.00 ₽</span>
+                    </div>
+                    <div class="result-row total">
+                        <span>Итоговая стоимость:</span>
+                        <span id="totalRes">0.00 ₽</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="result-row">
-                <span>Ноу-хау (80% — без НДС):</span>
-                <span id="knowHowRes">0.00 ₽</span>
-            </div>
-            <div class="result-row">
-                <span>Облагаемая база (20%):</span>
-                <span id="taxableRes">0.00 ₽</span>
-            </div>
-            <div class="result-row">
-                <span>Сумма НДС:</span>
-                <span id="vatAmountRes">0.00 ₽</span>
-            </div>
-            <div class="result-row total">
-                <span>Итоговая стоимость:</span>
-                <span id="totalRes">0.00 ₽</span>
+            <div class="card">
+                <h2>2. Параметры сети и этапы</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Дата отсчёта</label>
+                        <input type="date" id="startDate" value="2026-04-20" onchange="calculateAll()">
+                    </div>
+                    <div class="form-group">
+                        <label>Кол-во точек</label>
+                        <input type="number" id="pointCount" value="10" min="1" oninput="calculateAll()">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Город / Название</label>
+                        <input type="text" id="cityName" value="Точка" oninput="calculateAll()">
+                    </div>
+                    <div class="form-group">
+                        <label>Номер партнёра</label>
+                        <input type="number" id="partnerNum" value="1" oninput="calculateAll()">
+                    </div>
+                    <div class="form-group">
+                        <label>Дней между откр.</label>
+                        <input type="number" id="daysBetween" value="140" oninput="calculateAll()">
+                    </div>
+                </div>
+
+                <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
+                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #555;">Длительность этапов (дней)</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Поиск + аренда</label>
+                        <input type="number" id="searchDays" value="420" oninput="calculateAll()">
+                    </div>
+                    <div class="form-group">
+                        <label>Проект</label>
+                        <input type="number" id="projectDays" value="30" oninput="calculateAll()">
+                    </div>
+                    <div class="form-group">
+                        <label>Стройка</label>
+                        <input type="number" id="buildDays" value="120" oninput="calculateAll()">
+                    </div>
+                    <div class="form-group">
+                        <label>Открытие</label>
+                        <input type="number" id="openDays" value="14" oninput="calculateAll()">
+                    </div>
+                </div>
+                
+                <div class="header-metric">
+                    <h3>Срок покрытия города (лет)</h3>
+                    <div class="value" id="coverageResult">0,00</div>
+                </div>
             </div>
         </div>
+
+        <div class="card full-width">
+            <h2>График открытий</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Точка</th>
+                            <th>Согласование Локации</th>
+                            <th>Проектирование</th>
+                            <th>Строительство</th>
+                            <th>Открытие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        window.onload = calculate;
+        // Вспомогательные функции
+        function addDays(date, days) {
+            let result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
 
-        function calculate() {
+        function formatDate(dateObj) {
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const y = dateObj.getFullYear();
+            return `${d}.${m}.${y}`;
+        }
+
+        const formatCurrency = (num) => {
+            return num.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₽';
+        };
+
+        // Главная функция расчета
+        function calculateAll() {
+            calculateFee();
+            calculateTimeline();
+        }
+
+        // Логика финансов
+        function calculateFee() {
             const originalPrice = parseFloat(document.getElementById('basePrice').value) || 0;
             const vatRate = parseFloat(document.getElementById('vatRate').value) || 0;
-            
             const isNewPartner = document.getElementById('isNewPartner').checked;
             const hasPortal = document.getElementById('hasPortal').checked;
 
             let finalBasePrice = originalPrice;
 
-            // Логика 1: Если в городе НЕТ точки "Портал", сумма снижается до 1 000 000.
             if (!hasPortal && finalBasePrice > 1000000) {
                 finalBasePrice = 1000000;
             }
-
-            // Логика 2: Если партнёр НЕ новый (открывает вторую и последующие), скидка 25%
             if (!isNewPartner) {
                 finalBasePrice = finalBasePrice * 0.75;
             }
 
-            // Разбивка и налоги
-            const knowHow = finalBasePrice * 0.80; // 80%
-            const taxable = finalBasePrice * 0.20; // 20%
+            const knowHow = finalBasePrice * 0.80; 
+            const taxable = finalBasePrice * 0.20; 
             const vatAmount = taxable * (vatRate / 100); 
             const total = finalBasePrice + vatAmount; 
 
-            // Форматирование чисел
-            const formatCurrency = (num) => {
-                return num.toLocaleString('ru-RU', { 
-                    minimumFractionDigits: 2, 
-                    maximumFractionDigits: 2 
-                }) + ' ₽';
-            };
-
-            // Вывод данных
             document.getElementById('discountedBaseRes').innerText = formatCurrency(finalBasePrice);
             document.getElementById('knowHowRes').innerText = formatCurrency(knowHow);
             document.getElementById('taxableRes').innerText = formatCurrency(taxable);
             document.getElementById('vatAmountRes').innerText = formatCurrency(vatAmount);
             document.getElementById('totalRes').innerText = formatCurrency(total);
         }
-    </script>
 
+        // Логика сроков
+        function calculateTimeline() {
+            const startDateStr = document.getElementById('startDate').value;
+            const count = parseInt(document.getElementById('pointCount').value) || 0;
+            const cityName = document.getElementById('cityName').value || "";
+            const partnerNum = document.getElementById('partnerNum').value || "";
+            
+            const daysBetween = parseInt(document.getElementById('daysBetween').value) || 0;
+            const searchDays = parseInt(document.getElementById('searchDays').value) || 0;
+            const projectDays = parseInt(document.getElementById('projectDays').value) || 0;
+            const buildDays = parseInt(document.getElementById('buildDays').value) || 0;
+            const openDays = parseInt(document.getElementById('openDays').value) || 0;
+
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+
+            if (!startDateStr || count <= 0) return;
+
+            const [year, month, day] = startDateStr.split('-');
+            const baseDate = new Date(year, month - 1, day);
+
+            let currentOpeningDate = addDays(baseDate, searchDays + projectDays + buildDays + openDays);
+            let maxBuildDate = new Date(0);
+
+            for (let i = 1; i <= count; i++) {
+                let dateG = new Date(currentOpeningDate);
+                let dateF = addDays(dateG, -openDays);    
+                let dateE = addDays(dateF, -buildDays);   
+                let dateD = addDays(dateE, -projectDays); 
+
+                if (dateF > maxBuildDate) {
+                    maxBuildDate = dateF;
+                }
+
+                const pointName = `${cityName} ${partnerNum}-${i}`.trim();
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${pointName}</td>
+                    <td>${formatDate(dateD)}</td>
+                    <td style="background-color: #eaf5eb;">${formatDate(dateE)}</td>
+                    <td style="background-color: #eaf5eb;">${formatDate(dateF)}</td>
+                    <td style="background-color: #eaf5eb;">${formatDate(dateG)}</td>
+                `;
+                tbody.appendChild(tr);
+
+                currentOpeningDate = addDays(currentOpeningDate, daysBetween);
+            }
+
+            const diffTime = maxBuildDate - baseDate;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); 
+            const coverageYears = diffDays / 365;
+
+            document.getElementById('coverageResult').innerText = coverageYears.toFixed(2).replace('.', ',');
+        }
+
+        // Запуск при загрузке
+        window.onload = calculateAll;
+    </script>
 </body>
 </html>
