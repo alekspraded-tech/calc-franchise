@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор паушального взноса</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .calculator { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            max-width: 500px; 
+            width: 100%; 
+        }
+        h2 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin-top: 0; 
+            margin-bottom: 25px;
+        }
+        .form-group { 
+            margin-bottom: 20px; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            color: #555; 
+            font-weight: 600; 
+        }
+        input[type="number"] { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ccd1d9; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus { 
+            border-color: #3498db; 
+            outline: none; 
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            background: #f9fbfc;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+            width: 100%;
+        }
+        .benefits-info {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 6px 6px 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        .benefits-info strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #2980b9;
+        }
+        .benefits-info ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .benefits-info li {
+            margin-bottom: 6px;
+        }
+        .benefits-info li:last-child {
+            margin-bottom: 0;
+        }
+        .results { 
+            margin-top: 25px; 
+            padding-top: 20px; 
+            border-top: 1px solid #eee; 
+        }
+        .result-row { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 12px; 
+            color: #555; 
+            font-size: 15px;
+        }
+        .result-row.discounted-base {
+            color: #27ae60;
+            font-weight: 600;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ccc;
+            margin-bottom: 15px;
+        }
+        .result-row span:last-child {
+            font-weight: 600;
+        }
+        .result-row.total { 
+            font-weight: bold; 
+            font-size: 1.3em; 
+            color: #2c3e50; 
+            margin-top: 20px; 
+            border-top: 2px solid #2c3e50; 
+            padding-top: 15px; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h2>Расчет паушального взноса</h2>
+        
+        <div class="form-group">
+            <label for="basePrice">Стоимость пауша (базовая) (₽):</label>
+            <input type="number" id="basePrice" placeholder="Например, 1 500 000" min="0" oninput="calculate()">
+        </div>
+        
+        <div class="form-group">
+            <label for="vatRate">Ставка НДС (%):</label>
+            <input type="number" id="vatRate" value="22" min="0" max="100" oninput="calculate()">
+        </div>
+
+        <div class="benefits-info">
+            <strong>Описание льгот:</strong>
+            <ul>
+                <li>При открытии второй и последующих точек партнёром, скидка <strong>25%</strong> на паушальный взнос.</li>
+                <li>При открытии робот-мойки «Портал» в городе, где нет ни одной точки бренда, стоимость паушального взноса <strong>1 000 000 рублей</strong>.</li>
+            </ul>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="isNewPartner" checked onchange="calculate()">
+            <label for="isNewPartner">Новый партнёр сети</label>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="hasPortal" checked onchange="calculate()">
+            <label for="hasPortal">В городе есть точка «Портал»</label>
+        </div>
+
+        <div class="results">
+            <div class="result-row discounted-base">
+                <span>Сумма с учетом льгот:</span>
+                <span id="discountedBaseRes">0.00 ₽</span>
+            </div>
+
+            <div class="result-row">
+                <span>Ноу-хау (80% — без НДС):</span>
+                <span id="knowHowRes">0.00 ₽</span>
+            </div>
+            <div class="result-row">
+                <span>Облагаемая база (20%):</span>
+                <span id="taxableRes">0.00 ₽</span>
+            </div>
+            <div class="result-row">
+                <span>Сумма НДС:</span>
+                <span id="vatAmountRes">0.00 ₽</span>
+            </div>
+            <div class="result-row total">
+                <span>Итоговая стоимость:</span>
+                <span id="totalRes">0.00 ₽</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = calculate;
+
+        function calculate() {
+            const originalPrice = parseFloat(document.getElementById('basePrice').value) || 0;
+            const vatRate = parseFloat(document.getElementById('vatRate').value) || 0;
+            
+            const isNewPartner = document.getElementById('isNewPartner').checked;
+            const hasPortal = document.getElementById('hasPortal').checked;
+
+            let finalBasePrice = originalPrice;
+
+            // Логика 1: Если в городе НЕТ точки "Портал", сумма снижается до 1 000 000.
+            if (!hasPortal && finalBasePrice > 1000000) {
+                finalBasePrice = 1000000;
+            }
+
+            // Логика 2: Если партнёр НЕ новый (открывает вторую и последующие), скидка 25%
+            if (!isNewPartner) {
+                finalBasePrice = finalBasePrice * 0.75;
+            }
+
+            // Разбивка и налоги
+            const knowHow = finalBasePrice * 0.80; // 80%
+            const taxable = finalBasePrice * 0.20; // 20%
+            const vatAmount = taxable * (vatRate / 100); 
+            const total = finalBasePrice + vatAmount; 
+
+            // Форматирование чисел
+            const formatCurrency = (num) => {
+                return num.toLocaleString('ru-RU', { 
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2 
+                }) + ' ₽';
+            };
+
+            // Вывод данных
+            document.getElementById('discountedBaseRes').innerText = formatCurrency(finalBasePrice);
+            document.getElementById('knowHowRes').innerText = formatCurrency(knowHow);
+            document.getElementById('taxableRes').innerText = formatCurrency(taxable);
+            document.getElementById('vatAmountRes').innerText = formatCurrency(vatAmount);
+            document.getElementById('totalRes').innerText = formatCurrency(total);
+        }
+    </script>
+
+</body>
+</html>
