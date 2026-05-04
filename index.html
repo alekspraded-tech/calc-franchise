@@ -12,9 +12,10 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #eef2f5 0%, #dfe6ed 100%);
             min-height: 100vh;
+            color: #333;
         }
 
         /* Навигация */
@@ -28,7 +29,7 @@
         }
 
         .nav-bar {
-            max-width: 1200px;
+            max-width: 1500px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
@@ -51,10 +52,7 @@
         .logo-text {
             font-size: 20px;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            color: #1f3b4c;
         }
 
         .nav-links {
@@ -72,26 +70,27 @@
             font-weight: 600;
             cursor: pointer;
             border-radius: 30px;
-            transition: all 0.3s ease;
-            color: #555;
+            transition: all 0.2s ease;
+            color: #5e7e93;
             font-family: inherit;
         }
 
         .nav-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #1f3b4c;
             color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .nav-btn:hover:not(.active) {
-            background: #f0f0f0;
-            color: #667eea;
+            background: #e9f0f5;
+            color: #2c4b66;
         }
 
-        /* Основной контент */
+        /* Основной контент (переключение вкладок) */
         .page {
             display: none;
-            animation: fadeIn 0.4s ease;
+            animation: fadeIn 0.3s ease;
+            padding: 30px 20px;
         }
 
         .page.active-page {
@@ -103,50 +102,45 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Стили для дашборда (адаптированы из index.html) */
-        .dashboard-container {
+        /* Общие контейнеры для страниц */
+        .page-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 30px 20px;
+        }
+        
+        .page-container.wide {
+            max-width: 1500px;
         }
 
+        /* --- Стили для Дашборда (Страница 1) --- */
         .dashboard-header {
             text-align: center;
-            color: white;
+            color: #2c3e50;
             margin-bottom: 30px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-
-        .dashboard-header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .dashboard-header p {
-            opacity: 0.9;
-        }
-
-        .top-row {
+        
+        .dashboard-top-row {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
+            margin-bottom: 20px;
         }
 
-        .card {
-            background: white;
+        .dash-card {
+            background: rgba(255, 255, 255, 0.96);
             padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             flex: 1;
             min-width: 320px;
         }
 
-        .card.full-width {
+        .dash-card.full-width {
             width: 100%;
             box-sizing: border-box;
         }
 
-        .card h2 {
+        .dash-card h2 {
             margin-top: 0;
             color: #2c3e50;
             font-size: 20px;
@@ -168,7 +162,7 @@
             min-width: 120px;
         }
 
-        label {
+        .form-group label {
             display: block;
             margin-bottom: 6px;
             font-size: 13px;
@@ -176,7 +170,7 @@
             color: #555;
         }
 
-        input[type="number"], input[type="date"], input[type="text"] {
+        input[type="number"].dash-input, input[type="date"].dash-input, input[type="text"].dash-input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccd1d9;
@@ -187,8 +181,8 @@
             font-family: inherit;
         }
 
-        input:focus {
-            border-color: #667eea;
+        .dash-input:focus {
+            border-color: #3498db;
             outline: none;
         }
 
@@ -219,13 +213,15 @@
 
         .benefits-info {
             background-color: #e8f4fd;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #3498db;
             padding: 12px;
             margin-bottom: 20px;
             border-radius: 0 8px 8px 0;
             font-size: 13px;
             color: #2c3e50;
         }
+
+        .benefits-info strong { color: #2980b9; }
 
         .results-block {
             margin-top: 20px;
@@ -260,101 +256,359 @@
         }
 
         .header-metric {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #4a1531;
             color: white;
             padding: 15px 20px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
 
         .header-metric h3 { margin: 0; font-size: 16px; font-weight: 500; }
-        .header-metric .value { font-size: 28px; font-weight: bold; }
+        .header-metric .value { font-size: 24px; font-weight: bold; }
 
-        .table-container {
+        .dash-table-container {
             overflow-x: auto;
-            margin-top: 10px;
         }
 
-        table {
+        .dash-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
         }
 
-        th, td {
+        .dash-table th, .dash-table td {
             padding: 12px;
             border-bottom: 1px solid #eee;
             font-size: 14px;
         }
 
-        th {
+        .dash-table th {
             background-color: #f8f9fa;
             font-weight: 600;
             color: #2c3e50;
             white-space: nowrap;
         }
 
-        /* Адаптация стилей калькулятора премии под общий фон */
-        .calculator-wrapper {
-            background: transparent;
-            padding: 30px 20px;
-        }
-
+        /* --- Стили для Калькулятора Премий (Страница 2) --- */
         .calculator-card {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(2px);
             border-radius: 2rem;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35);
-            padding: 1.5rem 1.2rem 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem 1.2rem 2rem 1.2rem;
         }
 
-        @media (max-width: 768px) {
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.8rem;
+            border-bottom: 2px solid #cbdde9;
+            padding-bottom: 6px;
+        }
+
+        .calc-tab-btn {
+            flex: 1;
+            background: #e9f0f5;
+            border: none;
+            padding: 14px 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 40px 40px 24px 24px;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #2c4b66;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .calc-tab-btn.active {
+            background: #1f3b4c;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .calc-tab-content {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .calc-tab-content.active-tab {
+            display: block;
+        }
+
+        .calc-card-header {
+            font-size: 1.4rem;
+            margin: 0 0 0.5rem 0;
+            color: #1a2c3e;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #3b6e8b;
+            margin-bottom: 1.2rem;
+            border-left: 3px solid #7fafc7;
+            padding-left: 12px;
+        }
+
+        .fixed-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            background: #eef3fa;
+            border-radius: 1.2rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid #cde1ec;
+            align-items: flex-end;
+        }
+
+        .salary-field, .extra-field {
+            flex: 1;
+            min-width: 170px;
+        }
+
+        .salary-field label, .extra-field label {
+            display: block;
+            font-weight: 600;
+            color: #1f4e6e;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+        }
+
+        .salary-field input, .extra-field input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 1rem;
+            border: 1.5px solid #cbdbe6;
+            border-radius: 28px;
+            background: white;
+            font-weight: 500;
+        }
+
+        .info-cards {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .salary-card, .extra-card {
+            background: #2c7da0;
+            padding: 8px 20px;
+            border-radius: 48px;
+            color: white;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .salary-card span:first-child, .extra-card span:first-child {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            display: block;
+        }
+
+        .salary-amount, .extra-amount {
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .table-header-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 0 1rem 0;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .add-robot-btn, .reset-prices-btn, .delete-all-btn {
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .add-robot-btn { background: #1f6e43; color: white; }
+        .add-robot-btn:disabled { background: #9bb7c7; cursor: not-allowed; }
+        .reset-prices-btn { background: #4a6272; color: white; }
+        .delete-all-btn { background: #b13e3e; color: white; }
+        .reset-prices-btn:hover, .delete-all-btn:hover, .add-robot-btn:hover:not(:disabled) { filter: brightness(0.9); transform: scale(0.97); }
+
+        .robot-counter {
+            background: #e9edf2;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 1.2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .robot-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background: white;
+            border-radius: 1rem;
+            min-width: 700px;
+        }
+
+        .robot-table th {
+            background-color: #1f3b4c;
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            border-right: 1px solid #2f556b;
+        }
+
+        .robot-table td {
+            padding: 10px 6px;
+            border-bottom: 1px solid #e2edf2;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .robot-name-cell {
+            font-weight: 700;
+            background-color: #f8fafc;
+            white-space: nowrap;
+        }
+
+        .percent-cell {
+            font-weight: 600;
+            background-color: #fefcea;
+            font-family: monospace;
+        }
+
+        .robot-price-input, .install-price-input {
+            width: 110px;
+            padding: 7px 6px;
+            text-align: center;
+            font-size: 0.85rem;
+            border: 1.5px solid #cbdbe6;
+            border-radius: 24px;
+            margin: 0 2px;
+        }
+
+        .premium-badge {
+            font-weight: 700;
+            color: #1e6f3f;
+            background: #e9f4ef;
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 32px;
+            font-size: 0.85rem;
+            min-width: 80px;
+        }
+
+        .delete-row-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: #b91c2c;
+            padding: 4px 8px;
+            border-radius: 30px;
+        }
+
+        .summary-panel {
+            background: #eef3f7;
+            border-radius: 1.2rem;
+            padding: 1rem 1.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .total-box {
+            background: #1f3b4c;
+            padding: 8px 22px;
+            border-radius: 60px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .total-box span {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-left: 8px;
+        }
+
+        .footer-note {
+            font-size: 0.7rem;
+            text-align: right;
+            color: #5e7e93;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 750px) {
+            .robot-price-input, .install-price-input { width: 85px; }
             .nav-bar { flex-direction: column; }
-            .top-row { flex-direction: column; }
-            .card { min-width: auto; }
+            .dash-top-row { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
+<!-- Главная навигация -->
 <div class="nav-container">
     <div class="nav-bar">
         <div class="logo">
             <span class="logo-icon">🤝</span>
-            <span class="logo-text">Партнёрский портал</span>
+            <span class="logo-text">Портал партнёра</span>
         </div>
         <div class="nav-links">
             <button class="nav-btn active" data-page="dashboard">📊 Дашборд расчётов</button>
-            <button class="nav-btn" data-page="premium">💰 Калькулятор премии</button>
+            <button class="nav-btn" data-page="calculator">💰 Калькулятор премии</button>
         </div>
     </div>
 </div>
 
-<!-- Страница 1: Дашборд партнёра -->
+<!-- ==========================================
+     СТРАНИЦА 1: ДАШБОРД ПАРТНЁРА
+     ========================================== -->
 <div id="dashboard-page" class="page active-page">
-    <div class="dashboard-container">
+    <div class="page-container">
+        
         <div class="dashboard-header">
-            <h1>Дашборд партнёра</h1>
-            <p>Паушальный взнос и график открытий</p>
+            <h1>Дашборд партнёра: Расчёты и Сроки</h1>
         </div>
 
-        <div class="top-row">
-            <div class="card">
+        <div class="dashboard-top-row">
+            <div class="dash-card">
                 <h2>1. Паушальный взнос</h2>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Базовая стоимость (₽)</label>
-                        <input type="number" id="basePrice" value="1500000" min="0" oninput="calculateAllDashboard()">
+                        <input type="number" id="basePrice" class="dash-input" value="1500000" min="0" oninput="calculateDashAll()">
                     </div>
                     <div class="form-group">
                         <label>Ставка НДС (%)</label>
-                        <input type="number" id="vatRate" value="22" min="0" max="100" oninput="calculateAllDashboard()">
+                        <input type="number" id="vatRate" class="dash-input" value="22" min="0" max="100" oninput="calculateDashAll()">
                     </div>
                 </div>
 
@@ -363,11 +617,11 @@
                 </div>
 
                 <div class="checkbox-group">
-                    <input type="checkbox" id="isNewPartner" checked onchange="calculateAllDashboard()">
+                    <input type="checkbox" id="isNewPartner" checked onchange="calculateDashAll()">
                     <label for="isNewPartner">Новый партнёр сети</label>
                 </div>
                 <div class="checkbox-group">
-                    <input type="checkbox" id="hasPortal" checked onchange="calculateAllDashboard()">
+                    <input type="checkbox" id="hasPortal" checked onchange="calculateDashAll()">
                     <label for="hasPortal">В городе есть точка «Портал»</label>
                 </div>
 
@@ -395,32 +649,32 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="dash-card">
                 <h2>2. Параметры сети и этапы</h2>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Дата отсчёта</label>
-                        <input type="date" id="startDate" value="2026-04-20" onchange="calculateAllDashboard()">
+                        <input type="date" id="startDate" class="dash-input" value="2026-04-20" onchange="calculateDashAll()">
                     </div>
                     <div class="form-group">
                         <label>Кол-во точек</label>
-                        <input type="number" id="pointCount" value="10" min="1" oninput="calculateAllDashboard()">
+                        <input type="number" id="pointCount" class="dash-input" value="10" min="1" oninput="calculateDashAll()">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Город / Название</label>
-                        <input type="text" id="cityName" value="Точка" oninput="calculateAllDashboard()">
+                        <input type="text" id="cityName" class="dash-input" value="Точка" oninput="calculateDashAll()">
                     </div>
                     <div class="form-group">
                         <label>Номер партнёра</label>
-                        <input type="number" id="partnerNum" value="1" oninput="calculateAllDashboard()">
+                        <input type="number" id="partnerNum" class="dash-input" value="1" oninput="calculateDashAll()">
                     </div>
                     <div class="form-group">
                         <label>Дней между откр.</label>
-                        <input type="number" id="daysBetween" value="140" oninput="calculateAllDashboard()">
+                        <input type="number" id="daysBetween" class="dash-input" value="140" oninput="calculateDashAll()">
                     </div>
                 </div>
 
@@ -430,19 +684,19 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Поиск + аренда</label>
-                        <input type="number" id="searchDays" value="420" oninput="calculateAllDashboard()">
+                        <input type="number" id="searchDays" class="dash-input" value="420" oninput="calculateDashAll()">
                     </div>
                     <div class="form-group">
                         <label>Проект</label>
-                        <input type="number" id="projectDays" value="30" oninput="calculateAllDashboard()">
+                        <input type="number" id="projectDays" class="dash-input" value="30" oninput="calculateDashAll()">
                     </div>
                     <div class="form-group">
                         <label>Стройка</label>
-                        <input type="number" id="buildDays" value="120" oninput="calculateAllDashboard()">
+                        <input type="number" id="buildDays" class="dash-input" value="120" oninput="calculateDashAll()">
                     </div>
                     <div class="form-group">
                         <label>Открытие</label>
-                        <input type="number" id="openDays" value="14" oninput="calculateAllDashboard()">
+                        <input type="number" id="openDays" class="dash-input" value="14" oninput="calculateDashAll()">
                     </div>
                 </div>
                 
@@ -453,102 +707,134 @@
             </div>
         </div>
 
-        <div class="card full-width">
+        <div class="dash-card full-width">
             <h2>График открытий</h2>
-            <div class="table-container">
-                <table>
+            <div class="dash-table-container">
+                <table class="dash-table">
                     <thead>
-                        <tr><th>Точка</th><th>Согласование Локации</th><th>Проектирование</th><th>Строительство</th><th>Открытие</th></tr>
+                        <tr>
+                            <th>Точка</th>
+                            <th>Согласование Локации</th>
+                            <th>Проектирование</th>
+                            <th>Строительство</th>
+                            <th>Открытие</th>
+                        </tr>
                     </thead>
                     <tbody id="resultsBody"></tbody>
                 </table>
             </div>
         </div>
+
     </div>
 </div>
 
-<!-- Страница 2: Калькулятор премии (скопирован из второго файла с адаптацией) -->
-<div id="premium-page" class="page">
-    <div class="calculator-wrapper">
+<!-- ==========================================
+     СТРАНИЦА 2: КАЛЬКУЛЯТОР ПРЕМИЙ
+     ========================================== -->
+<div id="calculator-page" class="page">
+    <div class="page-container wide">
         <div class="calculator-card">
-            <div class="role-switch" style="display: flex; align-items: center; justify-content: space-between; background: #e2eaf1; border-radius: 100px; padding: 6px; margin-bottom: 1.8rem;">
-                <button class="switch-btn" id="switchManagerBtn" style="flex:1; text-align:center; padding:12px 10px; font-weight:700; font-size:1.1rem; border-radius:60px; cursor:pointer; border:none; background:transparent; color:#2c4b66;">📋 Менеджер</button>
-                <button class="switch-btn" id="switchLeadBtn" style="flex:1; text-align:center; padding:12px 10px; font-weight:700; font-size:1.1rem; border-radius:60px; cursor:pointer; border:none; background:transparent; color:#2c4b66;">⭐ Ведущий менеджер</button>
+            
+            <!-- Вкладки калькулятора -->
+            <div class="tabs">
+                <button class="calc-tab-btn active" data-calctab="manager">📋 Менеджер (допы 3.5%)</button>
+                <button class="calc-tab-btn" data-calctab="lead">⭐ Ведущий менеджер (допы 3.8%)</button>
             </div>
 
-            <h1 style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                <span>🤖 <span id="roleTitle">Менеджер</span> — калькулятор премии</span>
-                <span class="role-badge" id="extraPercentLabel" style="background:#f4f9fe; padding:6px 14px; border-radius:40px; font-size:0.8rem; font-weight:500;">Допы: 3.80%</span>
-            </h1>
-            <div class="desc" style="padding-bottom:1rem; border-bottom:2px solid #cbdde9; margin-bottom:1.5rem; font-size:0.85rem;">
-                📊 Проценты от продажи роботов согласно таблице (1…15).<br>
-                🔁 Переключайте роль — меняются % для роботов и % за доп. оборудование.<br>
-                ➕ Максимум 15 роботов. Итог = Оклад + Премия за допы + Сумма премий роботов.
+            <!-- Вкладка Менеджер -->
+            <div id="managerTab" class="calc-tab-content active-tab">
+                <h2 class="calc-card-header">🧑‍💼 Менеджер — премии за роботов и монтаж</h2>
+                <div class="desc">🔹 % с доп. оборудования: 3,5% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж по фиксированной шкале (1→0.15%, 2→0.25% ... 15→1.1%)</div>
+                
+                <div class="fixed-fields">
+                    <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-manager" placeholder="Оклад" value="0" step="any"></div>
+                    <div class="extra-field"><label>🛠️ Стоимость доп. оборудования</label><input type="number" class="extra-manager" placeholder="Сумма" value="0" step="any"></div>
+                    <div class="info-cards">
+                        <div class="salary-card"><span>Оклад</span><div class="salary-amount" id="managerSalaryDisplay">0.00 ₽</div></div>
+                        <div class="extra-card"><span>Премия за допы (3.5%)</span><div class="extra-amount" id="managerExtraDisplay">0.00 ₽</div></div>
+                    </div>
+                </div>
+
+                <div class="table-header-tools">
+                    <div class="btn-group">
+                        <button class="add-robot-btn" id="addManagerRobot">➕ Добавить робота</button>
+                        <button class="reset-prices-btn" id="resetManagerPrices">🔄 Обнулить цены</button>
+                        <button class="delete-all-btn" id="deleteManagerAll">🗑️ Удалить всех</button>
+                    </div>
+                    <div class="robot-counter" id="managerCounter">Роботов: 1 / 15</div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="robot-table" id="managerTable">
+                        <thead>
+                            <tr><th>Робот + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия (сумма × %)</th><th></th></tr>
+                        </thead>
+                        <tbody id="managerTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="summary-panel">
+                    <div>✨ ИТОГОВАЯ ВЫПЛАТА (оклад + допы + премии роботов+монтаж):</div>
+                    <div class="total-box">💰 <span id="managerTotal">0.00</span></div>
+                </div>
             </div>
 
-            <div class="fixed-fields" style="display: flex; flex-wrap: wrap; gap: 1.5rem; background: #eef3fa; border-radius: 1.2rem; padding: 1rem 1.5rem; margin-bottom: 1.8rem; align-items: flex-end;">
-                <div class="salary-field" style="flex:1; min-width:180px;">
-                    <label style="display:block; font-weight:600;">💰 Фиксированный оклад (₽)</label>
-                    <input type="number" id="salaryInput" placeholder="Введите оклад" value="0" step="any" style="width:100%; padding:10px 12px; border-radius:28px; border:1.5px solid #cbdbe6;">
+            <!-- Вкладка Ведущий менеджер -->
+            <div id="leadTab" class="calc-tab-content">
+                <h2 class="calc-card-header">⭐ Ведущий менеджер — премии за роботов и монтаж</h2>
+                <div class="desc">🔹 % с доп. оборудования: 3,8% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж: 1→0.2%, 2→0.3% ... 15→1.2%</div>
+                
+                <div class="fixed-fields">
+                    <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-lead" placeholder="Оклад" value="0" step="any"></div>
+                    <div class="extra-field"><label>🛠️ Стоимость доп. оборудования</label><input type="number" class="extra-lead" placeholder="Сумма" value="0" step="any"></div>
+                    <div class="info-cards">
+                        <div class="salary-card"><span>Оклад</span><div class="salary-amount" id="leadSalaryDisplay">0.00 ₽</div></div>
+                        <div class="extra-card"><span>Премия за допы (3.8%)</span><div class="extra-amount" id="leadExtraDisplay">0.00 ₽</div></div>
+                    </div>
                 </div>
-                <div class="salary-premium-card" style="background:#2c7da0; padding:8px 20px; border-radius:48px; color:white; text-align:center; min-width:170px;">
-                    <span>💵 Оклад</span>
-                    <div class="salary-premium-amount" id="salaryDisplay" style="font-size:1.5rem; font-weight:800;">0.00 ₽</div>
+
+                <div class="table-header-tools">
+                    <div class="btn-group">
+                        <button class="add-robot-btn" id="addLeadRobot">➕ Добавить робота</button>
+                        <button class="reset-prices-btn" id="resetLeadPrices">🔄 Обнулить цены</button>
+                        <button class="delete-all-btn" id="deleteLeadAll">🗑️ Удалить всех</button>
+                    </div>
+                    <div class="robot-counter" id="leadCounter">Роботов: 1 / 15</div>
                 </div>
-                <div class="extra-field" style="flex:1; min-width:180px;">
-                    <label style="display:block; font-weight:600;">🛠️ Стоимость доп. оборудования</label>
-                    <input type="number" id="extraCostInput" placeholder="Введите сумму" value="0" step="any" style="width:100%; padding:10px 12px; border-radius:28px; border:1.5px solid #cbdbe6;">
+                <div class="table-wrapper">
+                    <table class="robot-table" id="leadTable">
+                        <thead>
+                            <tr><th>Робот + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия (сумма × %)</th><th></th></tr>
+                        </thead>
+                        <tbody id="leadTableBody"></tbody>
+                    </table>
                 </div>
-                <div class="extra-premium-card" style="background:#2c7da0; padding:8px 20px; border-radius:48px; color:white; text-align:center; min-width:170px;">
-                    <span>🎯 Премия за допы</span>
-                    <div class="extra-premium-amount" id="extraPremiumDisplay" style="font-size:1.5rem; font-weight:800;">0.00 ₽</div>
+                <div class="summary-panel">
+                    <div>✨ ИТОГОВАЯ ВЫПЛАТА (оклад + допы + премии роботов+монтаж):</div>
+                    <div class="total-box">💰 <span id="leadTotal">0.00</span></div>
                 </div>
             </div>
 
-            <div class="table-header-tools" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap:12px;">
-                <div class="btn-group" style="display: flex; gap:12px;">
-                    <button class="add-robot-btn" id="addRobotBtn" style="background:#1f6e43; border:none; padding:8px 18px; border-radius:40px; color:white; font-weight:600; cursor:pointer;">➕ Добавить робота</button>
-                    <button class="reset-prices-btn" id="resetAllRobotPricesBtn" style="background:#4a6272; border:none; padding:8px 18px; border-radius:40px; color:white; font-weight:600; cursor:pointer;">🔄 Обнулить цены</button>
-                    <button class="delete-all-btn" id="deleteAllRobotsBtn" style="background:#b13e3e; border:none; padding:8px 18px; border-radius:40px; color:white; font-weight:600; cursor:pointer;">🗑️ Удалить всех</button>
-                </div>
-                <span id="robotCounter" style="background:#e9edf2; padding:6px 14px; border-radius:40px; font-weight:500;">Роботов: 1 / 15</span>
-            </div>
-
-            <div class="table-wrapper" style="overflow-x: auto; border-radius: 1.2rem;">
-                <table class="robot-table" id="robotTable" style="width:100%; border-collapse:collapse; background:white; min-width:600px;">
-                    <thead>
-                        <tr style="background:#1f3b4c; color:white;"><th>Робот</th><th>💰 Стоимость</th><th>📈 % от продажи</th><th>🏆 Премия</th><th></th></tr>
-                    </thead>
-                    <tbody id="robotTableBody"></tbody>
-                </table>
-            </div>
-
-            <div class="summary-panel" style="background: #eef3f7; border-radius: 1.2rem; padding: 1rem 1.8rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-top: 6px;">
-                <div style="font-weight:600;">✨ ИТОГОВАЯ ВЫПЛАТА (оклад + премии):</div>
-                <div class="total-premium" style="background:#1f3b4c; padding:8px 22px; border-radius:60px; color:white; font-weight:bold; font-size:1.2rem;">💰 <span id="grandTotalSpan">0.00</span></div>
-            </div>
-            <div class="footer-note" style="font-size:0.7rem; text-align:right; color:#5e7e93; margin-top:1rem;">
-                * Проценты менеджера: 1→0.15% ... 9→0.95%, 10-12→1.05%, 13-15→1.1%; Допы 3.8%.<br>
-                Ведущий: 1→0.2% ... 9→1%, 10-12→1.1%, 13-15→1.2%; Допы 4%. Лимит 15 роботов.
-            </div>
+            <div class="footer-note">* Для каждого робота: премия = (стоимость робота + стоимость монтажа) × процент. Максимум 15 позиций. Проценты по таблице из ТЗ.</div>
         </div>
     </div>
 </div>
 
 <script>
-    // ========== НАВИГАЦИЯ ==========
+    /* =========================================================
+       1. ЛОГИКА ГЛАВНОЙ НАВИГАЦИИ (ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ)
+       ========================================================= */
     const pages = {
         dashboard: document.getElementById('dashboard-page'),
-        premium: document.getElementById('premium-page')
+        calculator: document.getElementById('calculator-page')
     };
-    const navBtns = document.querySelectorAll('.nav-btn');
+    const mainNavBtns = document.querySelectorAll('.nav-btn');
 
-    function switchPage(pageId) {
+    function switchMainPage(pageId) {
         Object.keys(pages).forEach(key => {
             pages[key].classList.remove('active-page');
         });
         pages[pageId].classList.add('active-page');
-        navBtns.forEach(btn => {
+        
+        mainNavBtns.forEach(btn => {
             btn.classList.remove('active');
             if (btn.getAttribute('data-page') === pageId) {
                 btn.classList.add('active');
@@ -556,233 +842,294 @@
         });
     }
 
-    navBtns.forEach(btn => {
+    mainNavBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const pageId = btn.getAttribute('data-page');
-            if (pageId) switchPage(pageId);
+            if (pageId) switchMainPage(pageId);
         });
     });
 
-    // ========== ДАШБОРД (оригинальная логика) ==========
+
+    /* =========================================================
+       2. ЛОГИКА ДАШБОРДА ПАРТНЁРА (СТРАНИЦА 1)
+       ========================================================= */
     function addDays(date, days) {
         let result = new Date(date);
         result.setDate(result.getDate() + days);
         return result;
     }
+
     function formatDate(dateObj) {
         const d = String(dateObj.getDate()).padStart(2, '0');
         const m = String(dateObj.getMonth() + 1).padStart(2, '0');
         const y = dateObj.getFullYear();
         return `${d}.${m}.${y}`;
     }
+
     const formatCurrency = (num) => {
         return num.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₽';
     };
 
-    function calculateFee() {
-        const originalPrice = parseFloat(document.getElementById('basePrice')?.value) || 0;
-        const vatRate = parseFloat(document.getElementById('vatRate')?.value) || 0;
-        const isNewPartner = document.getElementById('isNewPartner')?.checked || false;
-        const hasPortal = document.getElementById('hasPortal')?.checked || false;
+    function calculateDashFee() {
+        const originalPrice = parseFloat(document.getElementById('basePrice').value) || 0;
+        const vatRate = parseFloat(document.getElementById('vatRate').value) || 0;
+        const isNewPartner = document.getElementById('isNewPartner').checked;
+        const hasPortal = document.getElementById('hasPortal').checked;
 
         let finalBasePrice = originalPrice;
         if (!hasPortal && finalBasePrice > 1000000) finalBasePrice = 1000000;
         if (!isNewPartner) finalBasePrice = finalBasePrice * 0.75;
 
-        const knowHow = finalBasePrice * 0.80;
-        const taxable = finalBasePrice * 0.20;
-        const vatAmount = taxable * (vatRate / 100);
-        const total = finalBasePrice + vatAmount;
+        const knowHow = finalBasePrice * 0.80; 
+        const taxable = finalBasePrice * 0.20; 
+        const vatAmount = taxable * (vatRate / 100); 
+        const total = finalBasePrice + vatAmount; 
 
-        if (document.getElementById('discountedBaseRes')) document.getElementById('discountedBaseRes').innerText = formatCurrency(finalBasePrice);
-        if (document.getElementById('knowHowRes')) document.getElementById('knowHowRes').innerText = formatCurrency(knowHow);
-        if (document.getElementById('taxableRes')) document.getElementById('taxableRes').innerText = formatCurrency(taxable);
-        if (document.getElementById('vatAmountRes')) document.getElementById('vatAmountRes').innerText = formatCurrency(vatAmount);
-        if (document.getElementById('totalRes')) document.getElementById('totalRes').innerText = formatCurrency(total);
+        document.getElementById('discountedBaseRes').innerText = formatCurrency(finalBasePrice);
+        document.getElementById('knowHowRes').innerText = formatCurrency(knowHow);
+        document.getElementById('taxableRes').innerText = formatCurrency(taxable);
+        document.getElementById('vatAmountRes').innerText = formatCurrency(vatAmount);
+        document.getElementById('totalRes').innerText = formatCurrency(total);
     }
 
-    function calculateTimeline() {
-        const startDateStr = document.getElementById('startDate')?.value;
-        const count = parseInt(document.getElementById('pointCount')?.value) || 0;
-        const cityName = document.getElementById('cityName')?.value || "";
-        const partnerNum = document.getElementById('partnerNum')?.value || "";
-        const daysBetween = parseInt(document.getElementById('daysBetween')?.value) || 0;
-        const searchDays = parseInt(document.getElementById('searchDays')?.value) || 0;
-        const projectDays = parseInt(document.getElementById('projectDays')?.value) || 0;
-        const buildDays = parseInt(document.getElementById('buildDays')?.value) || 0;
-        const openDays = parseInt(document.getElementById('openDays')?.value) || 0;
+    function calculateDashTimeline() {
+        const startDateStr = document.getElementById('startDate').value;
+        const count = parseInt(document.getElementById('pointCount').value) || 0;
+        const cityName = document.getElementById('cityName').value || "";
+        const partnerNum = document.getElementById('partnerNum').value || "";
+        
+        const daysBetween = parseInt(document.getElementById('daysBetween').value) || 0;
+        const searchDays = parseInt(document.getElementById('searchDays').value) || 0;
+        const projectDays = parseInt(document.getElementById('projectDays').value) || 0;
+        const buildDays = parseInt(document.getElementById('buildDays').value) || 0;
+        const openDays = parseInt(document.getElementById('openDays').value) || 0;
+
         const tbody = document.getElementById('resultsBody');
-        if (!tbody) return;
         tbody.innerHTML = '';
+
         if (!startDateStr || count <= 0) return;
 
         const [year, month, day] = startDateStr.split('-');
         const baseDate = new Date(year, month - 1, day);
+
         let currentOpeningDate = addDays(baseDate, searchDays + projectDays + buildDays + openDays);
         let maxBuildDate = new Date(0);
 
         for (let i = 1; i <= count; i++) {
             let dateG = new Date(currentOpeningDate);
-            let dateF = addDays(dateG, -openDays);
-            let dateE = addDays(dateF, -buildDays);
-            let dateD = addDays(dateE, -projectDays);
+            let dateF = addDays(dateG, -openDays);    
+            let dateE = addDays(dateF, -buildDays);   
+            let dateD = addDays(dateE, -projectDays); 
+
             if (dateF > maxBuildDate) maxBuildDate = dateF;
+
             const pointName = `${cityName} ${partnerNum}-${i}`.trim();
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${pointName}</td><td>${formatDate(dateD)}</td><td style="background-color:#eaf5eb;">${formatDate(dateE)}</td><td style="background-color:#eaf5eb;">${formatDate(dateF)}</td><td style="background-color:#eaf5eb;">${formatDate(dateG)}</td>`;
+            tr.innerHTML = `
+                <td>${pointName}</td>
+                <td>${formatDate(dateD)}</td>
+                <td style="background-color: #eaf5eb;">${formatDate(dateE)}</td>
+                <td style="background-color: #eaf5eb;">${formatDate(dateF)}</td>
+                <td style="background-color: #eaf5eb;">${formatDate(dateG)}</td>
+            `;
             tbody.appendChild(tr);
             currentOpeningDate = addDays(currentOpeningDate, daysBetween);
         }
+
         const diffTime = maxBuildDate - baseDate;
-        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); 
         const coverageYears = diffDays / 365;
-        const coverageEl = document.getElementById('coverageResult');
-        if (coverageEl) coverageEl.innerText = coverageYears.toFixed(2).replace('.', ',');
+
+        document.getElementById('coverageResult').innerText = coverageYears.toFixed(2).replace('.', ',');
     }
 
-    function calculateAllDashboard() { calculateFee(); calculateTimeline(); }
+    function calculateDashAll() {
+        calculateDashFee();
+        calculateDashTimeline();
+    }
 
-    // ========== КАЛЬКУЛЯТОР ПРЕМИИ (полная логика из второго файла) ==========
-    const MANAGER_PERCENTS = [0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05, 1.05, 1.05, 1.1, 1.1, 1.1];
-    const LEAD_PERCENTS = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.2, 1.2, 1.2, 1.2];
-    const MAX_ROBOTS_PREMIUM = 15;
-    let currentRolePremium = "manager";
-    const EXTRA_PERCENT = { manager: 3.80, lead: 4.0 };
-    let currentRobotsPremium = [];
 
-    const tbodyPremium = document.getElementById("robotTableBody");
-    const addBtnPremium = document.getElementById("addRobotBtn");
-    const resetPricesBtnPremium = document.getElementById("resetAllRobotPricesBtn");
-    const deleteAllBtnPremium = document.getElementById("deleteAllRobotsBtn");
-    const robotCounterSpanPremium = document.getElementById("robotCounter");
-    const salaryInputPremium = document.getElementById("salaryInput");
-    const extraCostInputPremium = document.getElementById("extraCostInput");
-    const salaryDisplaySpanPremium = document.getElementById("salaryDisplay");
-    const extraPremiumDisplaySpanPremium = document.getElementById("extraPremiumDisplay");
-    const grandTotalSpanPremium = document.getElementById("grandTotalSpan");
-    const roleTitleSpanPremium = document.getElementById("roleTitle");
-    const extraPercentLabelPremium = document.getElementById("extraPercentLabel");
-    const switchManagerBtnPremium = document.getElementById("switchManagerBtn");
-    const switchLeadBtnPremium = document.getElementById("switchLeadBtn");
+    /* =========================================================
+       3. ЛОГИКА КАЛЬКУЛЯТОРА ПРЕМИЙ (СТРАНИЦА 2)
+       ========================================================= */
+    const MANAGER_ROBOT_PERCENTS = [0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95,1.05,1.05,1.05,1.1,1.1,1.1];
+    const LEAD_ROBOT_PERCENTS   = [0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.2,1.2,1.2,1.2];
+    const MAX_ROBOTS = 15;
+    const EXTRA_PERCENT = { manager: 3.5, lead: 3.8 };
 
-    function getPercentForRobotPremium(robotNumber, role) {
-        if (robotNumber >= 1 && robotNumber <= MAX_ROBOTS_PREMIUM) {
-            return role === "manager" ? MANAGER_PERCENTS[robotNumber-1] : LEAD_PERCENTS[robotNumber-1];
+    // Управление внутренними вкладками калькулятора (Менеджер / Ведущий)
+    const managerTab = document.getElementById('managerTab');
+    const leadTab = document.getElementById('leadTab');
+    const calcTabBtns = document.querySelectorAll('.calc-tab-btn');
+    
+    function switchCalcTab(tabId) {
+        managerTab.classList.remove('active-tab');
+        leadTab.classList.remove('active-tab');
+        if (tabId === 'manager') managerTab.classList.add('active-tab');
+        else leadTab.classList.add('active-tab');
+        
+        calcTabBtns.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-calctab') === tabId) btn.classList.add('active');
+        });
+    }
+    
+    calcTabBtns.forEach(btn => {
+        btn.addEventListener('click', () => switchCalcTab(btn.getAttribute('data-calctab')));
+    });
+
+    // Класс калькулятора (один код для обеих вкладок)
+    class RoleCalculator {
+        constructor(role, tbodyId, counterId, totalSpanId, salaryDisplayId, extraDisplayId, addBtnId, resetBtnId, deleteAllBtnId, salaryInputSelector, extraInputSelector) {
+            this.role = role;
+            this.tbody = document.getElementById(tbodyId);
+            this.counterSpan = document.getElementById(counterId);
+            this.totalSpan = document.getElementById(totalSpanId);
+            this.salaryDisplay = document.getElementById(salaryDisplayId);
+            this.extraDisplay = document.getElementById(extraDisplayId);
+            this.addBtn = document.getElementById(addBtnId);
+            this.resetBtn = document.getElementById(resetBtnId);
+            this.deleteAllBtn = document.getElementById(deleteAllBtnId);
+            this.salaryInput = document.querySelector(salaryInputSelector);
+            this.extraInput = document.querySelector(extraInputSelector);
+            
+            this.currentRobots = [];
+            
+            this.initFirstRobot();
+            this.bindEvents();
+            this.updateCounters();
         }
-        return 0;
-    }
-
-    function updateSingleRobotPremium(robot) {
-        let price = parseFloat(robot.priceInput.value);
-        if (isNaN(price)) price = 0;
-        const percent = getPercentForRobotPremium(robot.robotNumber, currentRolePremium);
-        const premium = price * (percent / 100);
-        robot.premiumSpan.innerText = premium.toFixed(2);
-        return premium;
-    }
-
-    function calculateGrandTotalPremium() {
-        let salary = parseFloat(salaryInputPremium.value);
-        if (isNaN(salary)) salary = 0;
-        salaryDisplaySpanPremium.innerText = salary.toFixed(2) + " ₽";
-        let extraCost = parseFloat(extraCostInputPremium.value);
-        if (isNaN(extraCost)) extraCost = 0;
-        const extraPercentValue = EXTRA_PERCENT[currentRolePremium];
-        const extraPremium = extraCost * (extraPercentValue / 100);
-        extraPremiumDisplaySpanPremium.innerText = extraPremium.toFixed(2) + " ₽";
-        let totalRobots = 0;
-        for (const robot of currentRobotsPremium) {
-            let price = parseFloat(robot.priceInput.value);
-            if (isNaN(price)) price = 0;
-            const percent = getPercentForRobotPremium(robot.robotNumber, currentRolePremium);
-            totalRobots += price * (percent / 100);
+        
+        getPercentForRobot(robotNumber) {
+            if (robotNumber < 1 || robotNumber > MAX_ROBOTS) return 0;
+            return this.role === 'manager' ? MANAGER_ROBOT_PERCENTS[robotNumber-1] : LEAD_ROBOT_PERCENTS[robotNumber-1];
         }
-        const grandTotal = salary + extraPremium + totalRobots;
-        grandTotalSpanPremium.innerText = grandTotal.toFixed(2);
-    }
-
-    function refreshAllPercentDisplaysPremium() {
-        for (const robot of currentRobotsPremium) {
-            const percentValue = getPercentForRobotPremium(robot.robotNumber, currentRolePremium);
-            const percentFormatted = percentValue.toFixed(2).replace('.', ',') + '%';
-            const tdPercent = robot.rowElement.cells[2];
-            if (tdPercent) tdPercent.innerText = percentFormatted;
-            updateSingleRobotPremium(robot);
+        
+        createRobotRow(robotNumber) {
+            const percent = this.getPercentForRobot(robotNumber);
+            const percentFormatted = percent.toFixed(2).replace('.', ',') + '%';
+            const tr = document.createElement('tr');
+            
+            tr.innerHTML = `
+                <td class="robot-name-cell">🤖 Робот ${robotNumber} + монтаж</td>
+                <td><input type="number" placeholder="Цена робота" value="0" step="any" class="robot-price-input"></td>
+                <td><input type="number" placeholder="Монтаж" value="0" step="any" class="install-price-input"></td>
+                <td class="percent-cell">${percentFormatted}</td>
+                <td><span class="premium-badge">0.00</span></td>
+                <td><button class="delete-row-btn">✖</button></td>
+            `;
+            
+            this.tbody.appendChild(tr);
+            
+            const priceRobot = tr.querySelector('.robot-price-input');
+            const priceInstall = tr.querySelector('.install-price-input');
+            const premiumSpan = tr.querySelector('.premium-badge');
+            const delBtn = tr.querySelector('.delete-row-btn');
+            
+            const robotObj = { robotNumber, rowEl: tr, priceRobotInput: priceRobot, priceInstallInput: priceInstall, premiumSpan };
+            
+            const updateHandler = () => { this.updateSinglePremium(robotObj); this.calculateGrandTotal(); };
+            priceRobot.addEventListener('input', updateHandler);
+            priceInstall.addEventListener('input', updateHandler);
+            
+            delBtn.addEventListener('click', () => {
+                tr.remove();
+                this.currentRobots = this.currentRobots.filter(r => r.robotNumber !== robotNumber);
+                this.updateCounters();
+                this.calculateGrandTotal();
+            });
+            
+            return robotObj;
         }
-        const extraVal = EXTRA_PERCENT[currentRolePremium];
-        if(extraPercentLabelPremium) extraPercentLabelPremium.innerText = `Допы: ${extraVal.toFixed(2)}%`;
-        calculateGrandTotalPremium();
+        
+        updateSinglePremium(robot) {
+            const sum = (parseFloat(robot.priceRobotInput.value) || 0) + (parseFloat(robot.priceInstallInput.value) || 0);
+            const premium = sum * (this.getPercentForRobot(robot.robotNumber) / 100);
+            robot.premiumSpan.innerText = premium.toFixed(2);
+            return premium;
+        }
+        
+        calculateGrandTotal() {
+            const salary = parseFloat(this.salaryInput.value) || 0;
+            this.salaryDisplay.innerText = formatCurrency(salary);
+            
+            const extraCost = parseFloat(this.extraInput.value) || 0;
+            const extraPremium = extraCost * (EXTRA_PERCENT[this.role] / 100);
+            this.extraDisplay.innerText = formatCurrency(extraPremium);
+            
+            let totalRobots = 0;
+            for (const robot of this.currentRobots) {
+                const sum = (parseFloat(robot.priceRobotInput.value) || 0) + (parseFloat(robot.priceInstallInput.value) || 0);
+                totalRobots += sum * (this.getPercentForRobot(robot.robotNumber) / 100);
+            }
+            
+            this.totalSpan.innerText = (salary + extraPremium + totalRobots).toFixed(2);
+        }
+        
+        updateCounters() {
+            const count = this.currentRobots.length;
+            this.counterSpan.innerText = `Роботов: ${count} / ${MAX_ROBOTS}`;
+            if (this.addBtn) this.addBtn.disabled = (count >= MAX_ROBOTS);
+        }
+        
+        addRobot() {
+            if (this.currentRobots.length >= MAX_ROBOTS) return;
+            let freeNum = null;
+            for (let i=1; i<=MAX_ROBOTS; i++) {
+                if (!this.currentRobots.some(r => r.robotNumber === i)) { freeNum = i; break; }
+            }
+            if (!freeNum) return;
+            const newRobot = this.createRobotRow(freeNum);
+            this.currentRobots.push(newRobot);
+            this.updateSinglePremium(newRobot);
+            this.calculateGrandTotal();
+            this.updateCounters();
+        }
+        
+        resetAllPrices() {
+            this.currentRobots.forEach(robot => {
+                robot.priceRobotInput.value = '0';
+                robot.priceInstallInput.value = '0';
+                this.updateSinglePremium(robot);
+            });
+            this.calculateGrandTotal();
+        }
+        
+        deleteAllRobots() {
+            this.currentRobots.forEach(robot => robot.rowEl.remove());
+            this.currentRobots = [];
+            this.initFirstRobot();
+        }
+        
+        initFirstRobot() {
+            this.tbody.innerHTML = '';
+            const firstRobot = this.createRobotRow(1);
+            this.currentRobots.push(firstRobot);
+            this.updateSinglePremium(firstRobot);
+            this.calculateGrandTotal();
+            this.updateCounters();
+        }
+        
+        bindEvents() {
+            this.addBtn.addEventListener('click', () => this.addRobot());
+            this.resetBtn.addEventListener('click', () => this.resetAllPrices());
+            this.deleteAllBtn.addEventListener('click', () => this.deleteAllRobots());
+            this.salaryInput.addEventListener('input', () => this.calculateGrandTotal());
+            this.extraInput.addEventListener('input', () => this.calculateGrandTotal());
+        }
     }
 
-    function createRobotRowPremium(robotNumber) {
-        const percentValue = getPercentForRobotPremium(robotNumber, currentRolePremium);
-        const percentFormatted = percentValue.toFixed(2).replace('.', ',') + '%';
-        const tr = document.createElement("tr");
-        const tdName = document.createElement("td"); tdName.className = "robot-name-cell"; tdName.innerText = `🤖 Робот ${robotNumber}`; tr.appendChild(tdName);
-        const tdPrice = document.createElement("td"); const priceInput = document.createElement("input"); priceInput.type = "number"; priceInput.placeholder = "Стоимость"; priceInput.value = "0"; priceInput.step = "any"; priceInput.classList.add("robot-price-input"); tdPrice.appendChild(priceInput); tr.appendChild(tdPrice);
-        const tdPercent = document.createElement("td"); tdPercent.className = "percent-cell"; tdPercent.innerText = percentFormatted; tr.appendChild(tdPercent);
-        const tdPremium = document.createElement("td"); const premiumSpan = document.createElement("span"); premiumSpan.className = "premium-badge"; premiumSpan.innerText = "0.00"; tdPremium.appendChild(premiumSpan); tr.appendChild(tdPremium);
-        const tdDelete = document.createElement("td"); const deleteBtn = document.createElement("button"); deleteBtn.innerText = "✖"; deleteBtn.classList.add("delete-row-btn"); tdDelete.appendChild(deleteBtn); tr.appendChild(tdDelete);
-        if(tbodyPremium) tbodyPremium.appendChild(tr);
-        const robotObj = { robotNumber, rowElement: tr, priceInput, premiumSpan, deleteHandler: null };
-        const updateHandler = () => { updateSingleRobotPremium(robotObj); calculateGrandTotalPremium(); };
-        priceInput.addEventListener("input", updateHandler);
-        const deleteHandler = () => { tr.remove(); const idx = currentRobotsPremium.findIndex(r => r.robotNumber === robotNumber); if (idx !== -1) currentRobotsPremium.splice(idx, 1); calculateGrandTotalPremium(); updateUiCountersPremium(); };
-        deleteBtn.addEventListener("click", deleteHandler);
-        robotObj.deleteHandler = deleteHandler;
-        return robotObj;
-    }
 
-    function updateUiCountersPremium() {
-        const count = currentRobotsPremium.length;
-        if(robotCounterSpanPremium) robotCounterSpanPremium.innerText = `Роботов: ${count} / ${MAX_ROBOTS_PREMIUM}`;
-        if(addBtnPremium) { addBtnPremium.disabled = (count >= MAX_ROBOTS_PREMIUM); addBtnPremium.title = count >= MAX_ROBOTS_PREMIUM ? "Достигнут лимит 15 роботов" : "Добавить нового робота"; }
-    }
-
-    function addRobotPremium() {
-        if (currentRobotsPremium.length >= MAX_ROBOTS_PREMIUM) { alert(`Нельзя добавить больше ${MAX_ROBOTS_PREMIUM} роботов.`); return; }
-        let freeNumber = null;
-        for (let n = 1; n <= MAX_ROBOTS_PREMIUM; n++) { if (!currentRobotsPremium.some(r => r.robotNumber === n)) { freeNumber = n; break; } }
-        if (freeNumber === null) { alert("Все номера заняты!"); return; }
-        const newRobot = createRobotRowPremium(freeNumber);
-        currentRobotsPremium.push(newRobot);
-        updateSingleRobotPremium(newRobot);
-        calculateGrandTotalPremium();
-        updateUiCountersPremium();
-    }
-
-    function resetAllPricesPremium() { for (const robot of currentRobotsPremium) { robot.priceInput.value = "0"; updateSingleRobotPremium(robot); } calculateGrandTotalPremium(); }
-    function deleteAllRobotsPremium() { for (const robot of currentRobotsPremium) { if(robot.rowElement && robot.rowElement.remove) robot.rowElement.remove(); } currentRobotsPremium = []; const firstRobot = createRobotRowPremium(1); currentRobotsPremium.push(firstRobot); updateSingleRobotPremium(firstRobot); calculateGrandTotalPremium(); updateUiCountersPremium(); }
-    function setRolePremium(role) {
-        currentRolePremium = role;
-        if (role === "manager") { if(roleTitleSpanPremium) roleTitleSpanPremium.innerText = "Менеджер"; if(switchManagerBtnPremium) switchManagerBtnPremium.classList.add("active"); if(switchLeadBtnPremium) switchLeadBtnPremium.classList.remove("active"); }
-        else { if(roleTitleSpanPremium) roleTitleSpanPremium.innerText = "Ведущий менеджер"; if(switchLeadBtnPremium) switchLeadBtnPremium.classList.add("active"); if(switchManagerBtnPremium) switchManagerBtnPremium.classList.remove("active"); }
-        refreshAllPercentDisplaysPremium();
-        calculateGrandTotalPremium();
-    }
-
-    function initPremium() {
-        if(tbodyPremium) tbodyPremium.innerHTML = "";
-        currentRobotsPremium = [];
-        const first = createRobotRowPremium(1);
-        currentRobotsPremium.push(first);
-        updateSingleRobotPremium(first);
-        updateUiCountersPremium();
-        calculateGrandTotalPremium();
-        setRolePremium("manager");
-        if(salaryInputPremium) salaryInputPremium.addEventListener("input", () => calculateGrandTotalPremium());
-        if(extraCostInputPremium) extraCostInputPremium.addEventListener("input", () => calculateGrandTotalPremium());
-        if(addBtnPremium) addBtnPremium.addEventListener("click", addRobotPremium);
-        if(resetPricesBtnPremium) resetPricesBtnPremium.addEventListener("click", resetAllPricesPremium);
-        if(deleteAllBtnPremium) deleteAllBtnPremium.addEventListener("click", deleteAllRobotsPremium);
-        if(switchManagerBtnPremium) switchManagerBtnPremium.addEventListener("click", () => setRolePremium("manager"));
-        if(switchLeadBtnPremium) switchLeadBtnPremium.addEventListener("click", () => setRolePremium("lead"));
-    }
-
-    // Запуск всех инициализаций
+    /* =========================================================
+       4. ЗАПУСК ВСЕХ СКРИПТОВ ПРИ ЗАГРУЗКЕ
+       ========================================================= */
     window.onload = () => {
-        calculateAllDashboard();
-        initPremium();
+        // Инициализация дашборда
+        calculateDashAll();
+
+        // Инициализация калькуляторов премий
+        new RoleCalculator('manager', 'managerTableBody', 'managerCounter', 'managerTotal', 'managerSalaryDisplay', 'managerExtraDisplay', 'addManagerRobot', 'resetManagerPrices', 'deleteManagerAll', '.salary-manager', '.extra-manager');
+        new RoleCalculator('lead', 'leadTableBody', 'leadCounter', 'leadTotal', 'leadSalaryDisplay', 'leadExtraDisplay', 'addLeadRobot', 'resetLeadPrices', 'deleteLeadAll', '.salary-lead', '.extra-lead');
     };
 </script>
 </body>
