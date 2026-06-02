@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Порталы: План / Факт — Управление сетью</title>
+    <title>Порталы: Аналитика и Моделирование</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
         * {
@@ -245,23 +245,84 @@
             border-top: 1px dashed #cbdde6;
             padding-top: 12px;
         }
-        .reset-btn {
-            background: #ef4444;
-            color: white;
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+        .action-btn {
             border: none;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.75rem;
             cursor: pointer;
             font-weight: 600;
-            margin-left: auto;
+            color: white;
+            transition: opacity 0.2s;
         }
+        .action-btn:hover { opacity: 0.9; }
+        .btn-reset { background: #ef4444; }
+        .btn-export { background: #10b981; }
+        .btn-import { background: #3b82f6; }
         .header-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 10px;
+        }
+
+        /* Стили калькулятора НДС */
+        .vat-calc-box {
+            max-width: 500px;
+            margin: 20px auto;
+            background: #f8fafc;
+            border: 1px solid #e2edf2;
+            border-radius: 20px;
+            padding: 20px;
+        }
+        .calc-group {
+            margin-bottom: 16px;
+        }
+        .calc-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1e2a3e;
+            margin-bottom: 6px;
+        }
+        .calc-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .calc-select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+            background: white;
+        }
+        .vat-results {
+            margin-top: 20px;
+            border-top: 2px dashed #cbd5e1;
+            padding-top: 16px;
+        }
+        .vat-result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .vat-result-row.bold {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #1e40af;
         }
 
         @media (max-width: 650px) {
@@ -282,25 +343,52 @@
 <body>
 <div class="dashboard">
     <div class="header-box">
-        <h1>🚪 Моделирование порталов</h1>
-        <button class="reset-btn" id="resetStorageBtn">🔄 Сбросить к исходному шаблону</button>
+        <h1>🚪 Панель управления франшизой</h1>
+        <div class="btn-group">
+            <button class="action-btn btn-export" id="exportBtn" title="Скопировать базу данных для коллег">📤 Экспорт данных</button>
+            <button class="action-btn btn-import" id="importBtn" title="Загрузить базу данных от коллеги">📥 Импорт данных</button>
+            <button class="action-btn btn-reset" id="resetStorageBtn">🔄 Сброс панелей</button>
+        </div>
     </div>
-    <div class="sub">🔍 Локация → 🎨 Дизайн → 🏗️ Стройка → 🚪 Открытие (сдвиги: +4, +3, +2 месяца)</div>
+    <div class="sub">🧮 Калькулятор НДС 22% + 📈 Моделирование развития сети (План / Факт)</div>
 
     <div class="tabs">
-        <button class="tab-btn active" data-tab="plan">📊 План</button>
-        <button class="tab-btn" data-tab="fact">📈 Факт (4 графика)</button>
+        <button class="tab-btn active" data-tab="vat">🧮 Калькулятор НДС</button>
+        <button class="tab-btn" data-tab="plan">📊 План сети</button>
+        <button class="tab-btn" data-tab="fact">📈 Факт сети</button>
     </div>
 
-    <div id="plan-tab" class="tab-pane active">
-        <div class="moika-panel"><label>🧼 Мойки (план):</label><input type="number" id="moikaInputPlan" value="0" step="1" min="0"></div>
+    <div id="vat-tab" class="tab-pane active">
+        <div class="vat-calc-box">
+            <h2 style="font-size:1.1rem; margin-top:0; color:#0c4e6e; text-align:center;">Калькулятор НДС для паушального взноса</h2>
+            <div class="calc-group">
+                <label>Сумма взноса (руб.):</label>
+                <input type="number" id="vatAmount" class="calc-input" value="1500000" step="50000" min="0">
+            </div>
+            <div class="calc-group">
+                <label>Тип цены:</label>
+                <select id="vatType" class="calc-select">
+                    <option value="include">В том числе НДС (22%)</option>
+                    <option value="exclude">НДС (22%) сверху</option>
+                </select>
+            </div>
+            <div class="vat-results">
+                <div class="vat-result-row"><span>Стоимость без НДС:</span><span id="resNet" style="font-weight:600;">0 руб.</span></div>
+                <div class="vat-result-row"><span>Сумма НДС (22%):</span><span id="resVat" style="font-weight:600; color:#ef4444;">0 руб.</span></div>
+                <div class="vat-result-row bold"><span>Итого к оплате:</span><span id="resTotal">0 руб.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="plan-tab" class="tab-pane">
+        <div class="moika-panel"><label>🧼 Текущее кол-во моек в сети:</label><input type="number" class="global-moika-input" value="0" step="1" min="0"></div>
         <div class="kpi-grid" id="kpiContainerPlan"></div>
         <div id="yearsContainerPlan" class="years-container"></div>
         <div class="chart-card"><div class="chart-title">📈 Накопление по плану</div><div id="planChart" class="chart-container"></div></div>
     </div>
 
     <div id="fact-tab" class="tab-pane">
-        <div class="moika-panel"><label>🧼 Мойки (факт):</label><input type="number" id="moikaInputFact" value="0" step="1" min="0"></div>
+        <div class="moika-panel"><label>🧼 Текущее кол-во моек в сети:</label><input type="number" class="global-moika-input" value="0" step="1" min="0"></div>
         <div class="kpi-grid" id="kpiContainerFact"></div>
         <div id="yearsContainerFact" class="years-container"></div>
         <div class="charts-grid">
@@ -310,8 +398,6 @@
             <div class="chart-card"><div class="chart-title">🚪 Открытия — план vs факт</div><div id="chartOpenings" class="chart-container"></div></div>
         </div>
     </div>
-
-    <div class="footer-note">✅ Все изменения сохраняются автоматически. Клик по легенде скрывает линию и цифры.</div>
 </div>
 
 <script>
@@ -325,13 +411,35 @@
     }
     const T = months.length;
 
-    // Глобальные массивы данных
     let planOpenings, planConstr, planDesign, planLocations;
     let factOpenings, factConstr, factDesign, factLocations;
-    let planMoika = 0, factMoika = 0;
+    let currentWashes = 0; // ИСПРАВЛЕНО: Глобальная переменная вместо раздельных моек плана/факта
     let openYearsState = new Set();
 
-    // Инициализация данных (из LocalStorage или создание дефолтных)
+    // --- ЛОГИКА КАЛЬКУЛЯТОРА НДС ---
+    function calculateVat() {
+        const amt = parseFloat(document.getElementById('vatAmount').value) || 0;
+        const type = document.getElementById('vatType').value;
+        const vatRate = 22; // ИСПРАВЛЕНО: Ставка НДС 22% согласно изменениям 2025-2026 гг.
+        
+        let net = 0, vat = 0, total = 0;
+        
+        if (type === 'include') {
+            total = amt;
+            vat = total * (vatRate / (100 + vatRate));
+            net = total - vat;
+        } else {
+            net = amt;
+            vat = net * (vatRate / 100);
+            total = net + vat;
+        }
+        
+        document.getElementById('resNet').textContent = net.toLocaleString('ru-RU', {maximumFractionDigits:2}) + ' руб.';
+        document.getElementById('resVat').textContent = vat.toLocaleString('ru-RU', {maximumFractionDigits:2}) + ' руб.';
+        document.getElementById('resTotal').textContent = total.toLocaleString('ru-RU', {maximumFractionDigits:2}) + ' руб.';
+    }
+
+    // --- СИНХРОНИЗАЦИЯ БАЗЫ ДАННЫХ И ХРАНЕНИЕ ---
     function initDataStructures(forceReset = false) {
         if (forceReset) localStorage.clear();
 
@@ -348,10 +456,8 @@
             factDesign = JSON.parse(localStorage.getItem('portal_fact_design'));
             factLocations = JSON.parse(localStorage.getItem('portal_fact_locations'));
             
-            planMoika = parseInt(localStorage.getItem('portal_plan_moika')) || 0;
-            factMoika = parseInt(localStorage.getItem('portal_fact_moika')) || 0;
+            currentWashes = parseInt(localStorage.getItem('portal_current_washes')) || 0;
         } else {
-            // Базовый шаблон генерации
             const pattern2026 = [4,4,5,5,5,5,6,6,7,7,7,7];
             planOpenings = Array(T).fill(0);
             for (let off=0; off<5; off++) {
@@ -370,12 +476,11 @@
             factConstr = [...planConstr];
             factDesign = [...planDesign];
             factLocations = [...planLocations];
-            planMoika = 0; factMoika = 0;
+            currentWashes = 0;
             saveToStorage();
         }
 
-        document.getElementById('moikaInputPlan').value = planMoika;
-        document.getElementById('moikaInputFact').value = factMoika;
+        document.querySelectorAll('.global-moika-input').forEach(inp => inp.value = currentWashes);
     }
 
     function saveToStorage() {
@@ -387,12 +492,12 @@
         localStorage.setItem('portal_fact_constr', JSON.stringify(factConstr));
         localStorage.setItem('portal_fact_design', JSON.stringify(factDesign));
         localStorage.setItem('portal_fact_locations', JSON.stringify(factLocations));
-        localStorage.setItem('portal_plan_moika', planMoika);
-        localStorage.setItem('portal_fact_moika', factMoika);
+        localStorage.setItem('portal_current_washes', currentWashes);
     }
 
-    function computeCumulative(data) {
-        let cum = [], sum = 0;
+    // ИСПРАВЛЕНО: Расчет накопительного итога теперь начинается со стартовой точки текущих моек сети
+    function computeCumulative(data, baseline) {
+        let cum = [], sum = baseline;
         for (let i=0; i<T; i++) { sum += data[i]; cum.push(sum); }
         return cum;
     }
@@ -426,8 +531,7 @@
                     showarrow: true, arrowhead: 2, arrowsize: 0.5, arrowwidth: 1,
                     arrowcolor: color, ax: 0, ay: offsetY,
                     bgcolor: 'rgba(255,255,240,0.85)', bordercolor: color, borderwidth: 0.8,
-                    font: { size: 8, color: color },
-                    traceName: traceName
+                    font: { size: 8, color: color }, traceName: traceName
                 });
             }
         }
@@ -462,19 +566,16 @@
     function bindLegendClick(divId, masterAnnotations) {
         const el = document.getElementById(divId);
         if (!el) return;
-        
         el.removeAllListeners && el.removeAllListeners('plotly_legendclick');
         el.on('plotly_legendclick', function(data) {
             const curveIdx = data.curveNumber;
             const clickedTrace = data.data[curveIdx];
             const nextVisible = (clickedTrace.visible === 'legendonly') ? true : 'legendonly';
-            
             const visibleAnnos = masterAnnotations.filter(anno => {
                 const tIdx = data.data.findIndex(t => t.name === anno.traceName);
                 if (tIdx === curveIdx) return nextVisible === true;
                 return data.data[tIdx].visible !== 'legendonly';
             });
-            
             Plotly.update(divId, { visible: nextVisible }, { annotations: visibleAnnos }, [curveIdx]);
             return false;
         });
@@ -485,12 +586,13 @@
         const totalCon = planConstr.reduce((a,b)=>a+b,0);
         const totalDes = planDesign.reduce((a,b)=>a+b,0);
         const totalLoc = planLocations.reduce((a,b)=>a+b,0);
+        // ИСПРАВЛЕНО: Карточка ИТОГО теперь отображает сумму текущей сети и запланированных открытий
         document.getElementById('kpiContainerPlan').innerHTML = `
             <div class="kpi-card"><h3>🔍 Локации</h3><div class="kpi-value">${totalLoc}</div></div>
             <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
             <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
             <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
-            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + planMoika}</div></div>
+            <div class="kpi-card total-card"><h3>⭐ ИТОГО СЕТЬ</h3><div class="kpi-value">${totalOpen + currentWashes}</div></div>
         `;
 
         const yearly = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
@@ -514,7 +616,7 @@
             }
             html += `</tbody></table></div></div>`;
         }
-        html += `<div class="total-row">🧼 Мойки: ${planMoika} | 📊 Прогноз: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + planMoika}</div>`;
+        html += `<div class="total-row">🧼 Стартовая база: ${currentWashes} | 📊 Прогноз новых: ${totalOpen} | ⭐ ИТОГО СЕТЬ: ${totalOpen + currentWashes}</div>`;
         document.getElementById('yearsContainerPlan').innerHTML = html;
         
         document.querySelectorAll('#yearsContainerPlan .plan-input').forEach(inp => inp.addEventListener('change', handlePlanChange));
@@ -525,10 +627,10 @@
         }
 
         const labels = months.map(m=>m.label);
-        const cumO = computeCumulative(planOpenings);
-        const cumC = computeCumulative(planConstr);
-        const cumD = computeCumulative(planDesign);
-        const cumL = computeCumulative(planLocations);
+        const cumO = computeCumulative(planOpenings, currentWashes);
+        const cumC = computeCumulative(planConstr, currentWashes);
+        const cumD = computeCumulative(planDesign, currentWashes);
+        const cumL = computeCumulative(planLocations, currentWashes);
         
         const el = document.getElementById('planChart');
         let currentVis = [true, true, true, true];
@@ -555,7 +657,7 @@
 
         const layout = {
             xaxis: { tickangle: -45, tickvals: labels.filter((_,i)=>i%3===0), tickfont: { size: 8 } },
-            yaxis: { title: 'Накопленное количество' },
+            yaxis: { title: 'Накопленное количество моек' },
             legend: { orientation: 'h', y: 1.05 },
             margin: { t: 40, l: 50, r: 30, b: 70 },
             annotations: activeAnnos
@@ -589,7 +691,7 @@
             <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
             <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
             <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
-            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + factMoika}</div></div>
+            <div class="kpi-card total-card"><h3>⭐ ИТОГО СЕТЬ</h3><div class="kpi-value">${totalOpen + currentWashes}</div></div>
         `;
 
         const yearlyPlan = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
@@ -619,7 +721,7 @@
             }
             html += `</tbody></table></div></div>`;
         }
-        html += `<div class="total-row">🧼 Мойки: ${factMoika} | 📊 Факт открытий: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + factMoika}</div>`;
+        html += `<div class="total-row">🧼 Стартовая база: ${currentWashes} | 📊 Факт новых: ${totalOpen} | ⭐ ИТОГО СЕТЬ: ${totalOpen + currentWashes}</div>`;
         document.getElementById('yearsContainerFact').innerHTML = html;
 
         document.querySelectorAll('#yearsContainerFact .fact-input').forEach(inp => inp.addEventListener('change', handleFactChange));
@@ -654,7 +756,7 @@
             <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
             <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
             <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
-            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + factMoika}</div></div>
+            <div class="kpi-card total-card"><h3>⭐ ИТОГО СЕТЬ</h3><div class="kpi-value">${totalOpen + currentWashes}</div></div>
         `;
         const yearlyPlan = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
         const yearlyFact = getYearlyData(factOpenings, factConstr, factDesign, factLocations);
@@ -669,7 +771,7 @@
             }
         }
         const tr = document.querySelector('#yearsContainerFact .total-row');
-        if (tr) tr.innerHTML = `🧼 Мойки: ${factMoika} | 📊 Факт открытий: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + factMoika}`;
+        if (tr) tr.innerHTML = `🧼 Стартовая база: ${currentWashes} | 📊 Факт новых: ${totalOpen} | ⭐ ИТОГО СЕТЬ: ${totalOpen + currentWashes}`;
     }
 
     function renderComparisonCharts() {
@@ -699,7 +801,7 @@
             const layout = {
                 title: { text: title, font: { size: 12 } },
                 xaxis: { tickangle: -45, tickvals: labels.filter((_,i)=>i%3===0), tickfont: { size: 8 } },
-                yaxis: { title: 'Накопленное количество' },
+                yaxis: { title: 'Накопленное количество моек' },
                 legend: { orientation: 'h', y: 1.08, xanchor: 'center', x: 0.5 },
                 margin: { t: 50, l: 50, r: 30, b: 70 },
                 annotations: activeAnnos
@@ -709,18 +811,18 @@
             bindLegendClick(divId, allAnnotations);
         }
 
-        buildChart('chartLocations', '🔍 Локации — план vs факт', computeCumulative(planLocations), computeCumulative(factLocations), '#10b981', '#f59e0b');
-        buildChart('chartDesign', '🎨 Дизайн — план vs факт', computeCumulative(planDesign), computeCumulative(factDesign), '#8b5cf6', '#f59e0b');
-        buildChart('chartConstruction', '🏗️ Стройка — план vs факт', computeCumulative(planConstr), computeCumulative(factConstr), '#d97706', '#f59e0b');
-        buildChart('chartOpenings', '🚪 Открытия — план vs факт', computeCumulative(planOpenings), computeCumulative(factOpenings), '#0f5b7a', '#f59e0b');
+        buildChart('chartLocations', '🔍 Локации — план vs факт', computeCumulative(planLocations, currentWashes), computeCumulative(factLocations, currentWashes), '#10b981', '#f59e0b');
+        buildChart('chartDesign', '🎨 Дизайн — план vs факт', computeCumulative(planDesign, currentWashes), computeCumulative(factDesign, currentWashes), '#8b5cf6', '#f59e0b');
+        buildChart('chartConstruction', '🏗️ Стройка — план vs факт', computeCumulative(planConstr, currentWashes), computeCumulative(factConstruction, currentWashes), '#d97706', '#f59e0b');
+        buildChart('chartOpenings', '🚪 Открытия — план vs факт', computeCumulative(planOpenings, currentWashes), computeCumulative(factOpenings, currentWashes), '#0f5b7a', '#f59e0b');
     }
 
-    function updateAll() {
-        planMoika = parseInt(document.getElementById('moikaInputPlan').value) || 0;
-        factMoika = parseInt(document.getElementById('moikaInputFact').value) || 0;
+    function syncGlobalMoikas(val) {
+        currentWashes = parseInt(val) || 0;
+        document.querySelectorAll('.global-moika-input').forEach(inp => inp.value = currentWashes);
         saveToStorage();
         renderPlan();
-        renderFact();
+        updateFactSummaries();
         renderComparisonCharts();
     }
 
@@ -733,36 +835,71 @@
                 document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
                 btn.classList.add('active');
                 document.getElementById(`${tab}-tab`).classList.add('active');
+                
                 if (tab === 'fact') {
                     renderFact();
                     renderComparisonCharts();
-                } else {
+                } else if (tab === 'plan') {
                     renderPlan();
+                } else if (tab === 'vat') {
+                    calculateVat();
                 }
             };
         });
     }
 
-    document.getElementById('moikaInputPlan').addEventListener('input', updateAll);
-    document.getElementById('moikaInputFact').addEventListener('input', () => {
-        factMoika = parseInt(document.getElementById('moikaInputFact').value) || 0;
-        saveToStorage();
-        updateFactSummaries();
-        renderComparisonCharts();
+    // --- ОБРАБОТЧИКИ НАЖАТИЙ И СОБЫТИЙ ---
+    document.getElementById('vatAmount').addEventListener('input', calculateVat);
+    document.getElementById('vatType').addEventListener('change', calculateVat);
+
+    document.querySelectorAll('.global-moika-input').forEach(inp => {
+        inp.addEventListener('input', (e) => syncGlobalMoikas(e.target.value));
     });
 
+    // Экспорт в формате зашифрованной JSON-строки
+    document.getElementById('exportBtn').onclick = () => {
+        const dump = {
+            pOpen: planOpenings, pCon: planConstr, pDes: planDesign, pLoc: planLocations,
+            fOpen: factOpenings, fCon: factConstr, fDes: factDesign, fLoc: factLocations,
+            base: currentWashes
+        };
+        const str = btoa(unescape(encodeURIComponent(JSON.stringify(dump))));
+        navigator.clipboard.writeText(str).then(() => {
+            alert('Полный слепок базы данных успешно скопирован в буфер обмена! Перешлите его коллеге.');
+        });
+    };
+
+    // Импорт полученной от коллеги строки
+    document.getElementById('importBtn').onclick = () => {
+        const str = prompt('Вставьте зашифрованную строку экспорта, полученную от коллеги:');
+        if (!str) return;
+        try {
+            const json = JSON.parse(decodeURIComponent(escape(atob(str))));
+            if(json.pOpen && json.fOpen) {
+                planOpenings = json.pOpen; planConstr = json.pCon; planDesign = json.pDes; planLocations = json.pLoc;
+                factOpenings = json.fOpen; factConstr = json.fCon; factDesign = json.fDes; factLocations = json.fLoc;
+                currentWashes = json.base || 0;
+                saveToStorage();
+                document.querySelectorAll('.global-moika-input').forEach(inp => inp.value = currentWashes);
+                renderPlan();
+                alert('База данных успешно импортирована и синхронизирована!');
+                document.querySelector('.tab-btn[data-tab="plan"]').click();
+            } else { alert('Неверный формат данных.'); }
+        } catch(e) { alert('Ошибка при импорте. Проверьте правильность строки.'); }
+    };
+
     document.getElementById('resetStorageBtn').onclick = () => {
-        if (confirm('Вы уверены, что хотите сбросить все измененные данные плана и факта к исходному шаблону?')) {
+        if (confirm('Внимание! Все текущие изменения плана и факта будут безвозвратно удалены. Восстановить исходный шаблон?')) {
             initDataStructures(true);
             renderPlan();
-            renderFact();
-            renderComparisonCharts();
+            calculateVat();
         }
     };
 
+    // Старт
     initDataStructures();
     initTabs();
-    renderPlan();
+    calculateVat();
 })();
 </script>
 </body>
