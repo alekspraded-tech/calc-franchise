@@ -2,1135 +2,768 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Партнёрский портал</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Порталы: План / Факт — Управление сетью</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
         }
-
         body {
-            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, #eef2f5 0%, #dfe6ed 100%);
-            min-height: 100vh;
-            color: #333;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 16px 12px;
         }
-
-        /* Навигация */
-        .nav-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-bar {
-            max-width: 1500px;
+        .dashboard {
+            max-width: 1600px;
             margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            padding: 16px 16px 24px;
         }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 0;
-        }
-
-        .logo-icon {
-            font-size: 28px;
-        }
-
-        .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1f3b4c;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 10px 0;
-        }
-
-        .nav-btn {
-            padding: 10px 24px;
-            border: none;
-            background: transparent;
-            font-size: 15px;
+        h1 {
+            font-size: 1.5rem;
             font-weight: 600;
-            cursor: pointer;
-            border-radius: 30px;
-            transition: all 0.2s ease;
-            color: #5e7e93;
-            font-family: inherit;
+            margin: 0 0 0.25rem;
+            color: #1e2a3e;
         }
-
-        .nav-btn.active {
-            background: #1f3b4c;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .nav-btn:hover:not(.active) {
-            background: #e9f0f5;
-            color: #2c4b66;
-        }
-
-        /* Основной контент (переключение вкладок) */
-        .page {
-            display: none;
-            animation: fadeIn 0.3s ease;
-            padding: 30px 20px;
-        }
-
-        .page.active-page {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Общие контейнеры для страниц */
-        .page-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .page-container.wide {
-            max-width: 1500px;
-        }
-
-        /* --- Стили для Дашборда (Страница 1) --- */
-        .dashboard-header {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-        }
-        
-        .dashboard-top-row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .dash-card {
-            background: rgba(255, 255, 255, 0.96);
-            padding: 25px;
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            flex: 1;
-            min-width: 320px;
-        }
-
-        .dash-card.full-width {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .dash-card h2 {
-            margin-top: 0;
-            color: #2c3e50;
-            font-size: 20px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        input[type="number"].dash-input, input[type="date"].dash-input, input[type="text"].dash-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccd1d9;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            font-family: inherit;
-        }
-
-        .dash-input:focus {
-            border-color: #3498db;
-            outline: none;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            background: #f9fbfc;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #e1e8ed;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        .checkbox-group label {
-            margin-bottom: 0;
-            font-weight: normal;
-            cursor: pointer;
-            width: 100%;
-            font-size: 14px;
-        }
-
-        .benefits-info {
-            background-color: #e8f4fd;
-            border-left: 4px solid #3498db;
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 0 8px 8px 0;
-            font-size: 13px;
-            color: #2c3e50;
-        }
-
-        .benefits-info strong { color: #2980b9; }
-
-        .results-block {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .result-row.discounted {
-            color: #27ae60;
-            font-weight: 600;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed #ccc;
-        }
-
-        .result-row span:last-child { font-weight: 600; }
-
-        .result-row.total {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #2c3e50;
-            margin-top: 15px;
-            border-top: 2px solid #2c3e50;
-            padding-top: 12px;
-        }
-
-        .header-metric {
-            background: #4a1531;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .header-metric h3 { margin: 0; font-size: 16px; font-weight: 500; }
-        .header-metric .value { font-size: 24px; font-weight: bold; }
-
-        .dash-table-container {
-            overflow-x: auto;
-        }
-
-        .dash-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        .dash-table th, .dash-table td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
-        }
-
-        .dash-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #2c3e50;
-            white-space: nowrap;
-        }
-
-        /* --- Стили для Калькулятора Премий (Страница 2) --- */
-        .calculator-card {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 1.5rem 1.2rem 2rem 1.2rem;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 1.8rem;
-            border-bottom: 2px solid #cbdde9;
-            padding-bottom: 6px;
-        }
-
-        .calc-tab-btn {
-            flex: 1;
-            background: #e9f0f5;
-            border: none;
-            padding: 14px 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 40px 40px 24px 24px;
-            cursor: pointer;
-            transition: 0.2s;
-            color: #2c4b66;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .calc-tab-btn.active {
-            background: #1f3b4c;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .calc-tab-content {
-            display: none;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .calc-tab-content.active-tab {
-            display: block;
-        }
-
-        .calc-card-header {
-            font-size: 1.4rem;
-            margin: 0 0 0.5rem 0;
-            color: #1a2c3e;
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-        }
-
-        .desc {
-            font-size: 0.85rem;
-            color: #3b6e8b;
-            margin-bottom: 1.2rem;
-            border-left: 3px solid #7fafc7;
+        .sub {
+            color: #4a627a;
+            border-left: 4px solid #3b82f6;
             padding-left: 12px;
-        }
-
-        .fixed-fields {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            background: #eef3fa;
-            border-radius: 1.2rem;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.8rem;
-            border: 1px solid #cde1ec;
-            align-items: flex-end;
-        }
-
-        .salary-field, .extra-field {
-            flex: 1;
-            min-width: 170px;
-        }
-
-        .salary-field label, .extra-field label {
-            display: block;
-            font-weight: 600;
-            color: #1f4e6e;
-            margin-bottom: 6px;
+            margin: 8px 0 20px;
             font-size: 0.8rem;
         }
-
-        .salary-field input, .extra-field input {
-            width: 100%;
-            padding: 10px 12px;
-            font-size: 1rem;
-            border: 1.5px solid #cbdbe6;
-            border-radius: 28px;
-            background: white;
-            font-weight: 500;
-        }
-
-        .info-cards {
+        .tabs {
             display: flex;
-            gap: 12px;
+            gap: 4px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
-
-        .salary-card, .extra-card {
-            background: #2c7da0;
-            padding: 8px 20px;
-            border-radius: 48px;
-            color: white;
-            text-align: center;
-            min-width: 150px;
-        }
-
-        .salary-card span:first-child, .extra-card span:first-child {
-            font-size: 0.7rem;
-            opacity: 0.9;
-            display: block;
-        }
-
-        .salary-amount, .extra-amount {
-            font-size: 1.4rem;
-            font-weight: 800;
-        }
-
-        .table-header-tools {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 0 0 1rem 0;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .add-robot-btn, .reset-prices-btn, .delete-all-btn {
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .add-robot-btn { background: #1f6e43; color: white; }
-        .add-robot-btn:disabled { background: #9bb7c7; cursor: not-allowed; }
-        .reset-prices-btn { background: #4a6272; color: white; }
-        .delete-all-btn { background: #b13e3e; color: white; }
-        .reset-prices-btn:hover, .delete-all-btn:hover, .add-robot-btn:hover:not(:disabled) { filter: brightness(0.9); transform: scale(0.97); }
-
-        .robot-counter {
-            background: #e9edf2;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-weight: 500;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 1.2rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .robot-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            background: white;
-            border-radius: 1rem;
-            min-width: 700px;
-        }
-
-        .robot-table th {
-            background-color: #1f3b4c;
-            color: white;
-            padding: 12px 8px;
-            text-align: center;
-            border-right: 1px solid #2f556b;
-        }
-
-        .robot-table td {
-            padding: 10px 6px;
-            border-bottom: 1px solid #e2edf2;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .robot-name-cell {
-            font-weight: 700;
-            background-color: #f8fafc;
-            white-space: nowrap;
-        }
-
-        .percent-cell {
-            font-weight: 600;
-            background-color: #fefcea;
-            font-family: monospace;
-        }
-
-        .robot-price-input, .install-price-input {
-            width: 110px;
-            padding: 7px 6px;
-            text-align: center;
-            font-size: 0.85rem;
-            border: 1.5px solid #cbdbe6;
-            border-radius: 24px;
-            margin: 0 2px;
-        }
-
-        .premium-badge {
-            font-weight: 700;
-            color: #1e6f3f;
-            background: #e9f4ef;
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 32px;
-            font-size: 0.85rem;
-            min-width: 80px;
-        }
-
-        .delete-row-btn {
+        .tab-btn {
             background: none;
             border: none;
-            font-size: 1.25rem;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #5b6e8c;
             cursor: pointer;
-            color: #b91c2c;
-            padding: 4px 8px;
-            border-radius: 30px;
+            border-radius: 30px 30px 0 0;
+            transition: all 0.2s;
         }
-
-        .summary-panel {
-            background: #eef3f7;
-            border-radius: 1.2rem;
-            padding: 1rem 1.8rem;
+        .tab-btn.active {
+            color: #2563eb;
+            background: #eff6ff;
+            border-bottom: 3px solid #2563eb;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 14px 12px;
+            border: 1px solid #e2edf2;
+            text-align: center;
+        }
+        .kpi-card h3 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #5b6e8c;
+            margin: 0 0 8px;
+        }
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1;
+        }
+        .total-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+        }
+        .total-card .kpi-value {
+            color: #facc15;
+        }
+        .moika-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 40px;
+            width: fit-content;
+            flex-wrap: wrap;
+        }
+        .moika-panel label {
+            font-weight: 700;
+            color: #1e2a3e;
+            font-size: 0.85rem;
+        }
+        .moika-panel input {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            width: 100px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+        }
+        .years-container {
+            margin: 20px 0 20px;
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 12px 14px;
+            border: 1px solid #e0edf2;
+        }
+        .years-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: #0c4e6e;
+        }
+        .year-item {
+            margin-bottom: 10px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .year-header {
+            background: #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            gap: 12px;
         }
-
-        .total-box {
-            background: #1f3b4c;
-            padding: 8px 22px;
-            border-radius: 60px;
-            color: white;
-            font-weight: bold;
+        .year-summary {
+            display: flex;
+            gap: 12px;
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
         }
-
-        .total-box span {
-            font-size: 1.6rem;
-            font-weight: 800;
-            margin-left: 8px;
+        .year-details {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 4px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
-
-        .footer-note {
+        .year-details.open {
+            display: block;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 0.7rem;
-            text-align: right;
-            color: #5e7e93;
-            margin-top: 1rem;
+            min-width: 600px;
+        }
+        .data-table th, .data-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .fact-input, .plan-input {
+            width: 65px;
+            padding: 6px 4px;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.7rem;
+        }
+        .plan-input {
+            color: #1e40af;
+            font-weight: 600;
+            background: #f8fafc;
+        }
+        .charts-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .chart-card {
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid #e9eef3;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .chart-container {
+            height: 380px;
+            width: 100%;
+            min-width: 1000px;
+        }
+        .total-row {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            background: #eef2ff;
+            padding: 10px 12px;
+            border-radius: 16px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.65rem;
+            text-align: center;
+            color: #6a7c8f;
+            border-top: 1px dashed #cbdde6;
+            padding-top: 12px;
+        }
+        .reset-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: auto;
+        }
+        .header-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        @media (max-width: 750px) {
-            .robot-price-input, .install-price-input { width: 85px; }
-            .nav-bar { flex-direction: column; }
-            .dash-top-row { flex-direction: column; }
+        @media (max-width: 650px) {
+            body { padding: 10px 6px; }
+            .dashboard { padding: 12px 8px 16px; border-radius: 16px; }
+            h1 { font-size: 1.25rem; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .total-card { grid-column: span 2; }
+            .kpi-card { padding: 10px 6px; }
+            .kpi-value { font-size: 1.4rem; }
+            .year-header { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 12px; }
+            .year-summary { width: 100%; justify-content: space-between; font-size: 0.7rem; padding: 4px 8px; }
+            .chart-container { height: 320px; min-width: 850px; }
+            .moika-panel { width: 100%; justify-content: space-between; border-radius: 16px; }
         }
     </style>
 </head>
 <body>
+<div class="dashboard">
+    <div class="header-box">
+        <h1>🚪 Моделирование порталов</h1>
+        <button class="reset-btn" id="resetStorageBtn">🔄 Сбросить к исходному шаблону</button>
+    </div>
+    <div class="sub">🔍 Локация → 🎨 Дизайн → 🏗️ Стройка → 🚪 Открытие (сдвиги: +4, +3, +2 месяца)</div>
 
-<!-- Главная навигация -->
-<div class="nav-container">
-    <div class="nav-bar">
-        <div class="logo">
-            <span class="logo-icon">🤝</span>
-            <span class="logo-text">Портал партнёра</span>
-        </div>
-        <div class="nav-links">
-            <button class="nav-btn active" data-page="dashboard">📊 Дашборд расчётов</button>
-            <button class="nav-btn" data-page="calculator">💰 Калькулятор премии</button>
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="plan">📊 План</button>
+        <button class="tab-btn" data-tab="fact">📈 Факт (4 графика)</button>
+    </div>
+
+    <div id="plan-tab" class="tab-pane active">
+        <div class="moika-panel"><label>🧼 Мойки (план):</label><input type="number" id="moikaInputPlan" value="0" step="1" min="0"></div>
+        <div class="kpi-grid" id="kpiContainerPlan"></div>
+        <div id="yearsContainerPlan" class="years-container"></div>
+        <div class="chart-card"><div class="chart-title">📈 Накопление по плану</div><div id="planChart" class="chart-container"></div></div>
+    </div>
+
+    <div id="fact-tab" class="tab-pane">
+        <div class="moika-panel"><label>🧼 Мойки (факт):</label><input type="number" id="moikaInputFact" value="0" step="1" min="0"></div>
+        <div class="kpi-grid" id="kpiContainerFact"></div>
+        <div id="yearsContainerFact" class="years-container"></div>
+        <div class="charts-grid">
+            <div class="chart-card"><div class="chart-title">🔍 Локации — план vs факт</div><div id="chartLocations" class="chart-container"></div></div>
+            <div class="chart-card"><div class="chart-title">🎨 Дизайн — план vs факт</div><div id="chartDesign" class="chart-container"></div></div>
+            <div class="chart-card"><div class="chart-title">🏗️ Стройка — план vs факт</div><div id="chartConstruction" class="chart-container"></div></div>
+            <div class="chart-card"><div class="chart-title">🚪 Открытия — план vs факт</div><div id="chartOpenings" class="chart-container"></div></div>
         </div>
     </div>
-</div>
 
-<!-- ==========================================
-     СТРАНИЦА 1: ДАШБОРД ПАРТНЁРА
-     ========================================== -->
-<div id="dashboard-page" class="page active-page">
-    <div class="page-container">
-        
-        <div class="dashboard-header">
-            <h1>Дашборд партнёра: Расчёты и Сроки</h1>
-        </div>
-
-        <div class="dashboard-top-row">
-            <div class="dash-card">
-                <h2>1. Паушальный взнос</h2>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Базовая стоимость (₽)</label>
-                        <input type="number" id="basePrice" class="dash-input" value="1500000" min="0" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Ставка НДС (%)</label>
-                        <input type="number" id="vatRate" class="dash-input" value="22" min="0" max="100" oninput="calculateDashAll()">
-                    </div>
-                </div>
-
-                <div class="benefits-info">
-                    <strong>Льготы:</strong> Скидка 25% со второй точки. Если в городе нет "Портала", взнос фиксируется на 1 000 000 ₽.
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="isNewPartner" checked onchange="calculateDashAll()">
-                    <label for="isNewPartner">Новый партнёр сети</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="hasPortal" checked onchange="calculateDashAll()">
-                    <label for="hasPortal">В городе есть точка «Портал»</label>
-                </div>
-
-                <div class="results-block">
-                    <div class="result-row discounted">
-                        <span>Сумма с учетом льгот:</span>
-                        <span id="discountedBaseRes">0.00 ₽</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Ноу-хау (80% — без НДС):</span>
-                        <span id="knowHowRes">0.00 ₽</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Облагаемая база (20%):</span>
-                        <span id="taxableRes">0.00 ₽</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Сумма НДС:</span>
-                        <span id="vatAmountRes">0.00 ₽</span>
-                    </div>
-                    <div class="result-row total">
-                        <span>Итоговая стоимость:</span>
-                        <span id="totalRes">0.00 ₽</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dash-card">
-                <h2>2. Параметры сети и этапы</h2>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Дата отсчёта</label>
-                        <input type="date" id="startDate" class="dash-input" value="2026-04-20" onchange="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Кол-во точек</label>
-                        <input type="number" id="pointCount" class="dash-input" value="10" min="1" oninput="calculateDashAll()">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Город / Название</label>
-                        <input type="text" id="cityName" class="dash-input" value="Точка" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Номер партнёра</label>
-                        <input type="number" id="partnerNum" class="dash-input" value="1" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Дней между откр.</label>
-                        <input type="number" id="daysBetween" class="dash-input" value="140" oninput="calculateDashAll()">
-                    </div>
-                </div>
-
-                <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
-                <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #555;">Длительность этапов (дней)</h3>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Поиск + аренда</label>
-                        <input type="number" id="searchDays" class="dash-input" value="420" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Проект</label>
-                        <input type="number" id="projectDays" class="dash-input" value="30" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Стройка</label>
-                        <input type="number" id="buildDays" class="dash-input" value="120" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Открытие</label>
-                        <input type="number" id="openDays" class="dash-input" value="14" oninput="calculateDashAll()">
-                    </div>
-                </div>
-                
-                <div class="header-metric">
-                    <h3>Срок покрытия города (лет)</h3>
-                    <div class="value" id="coverageResult">0,00</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="dash-card full-width">
-            <h2>График открытий</h2>
-            <div class="dash-table-container">
-                <table class="dash-table">
-                    <thead>
-                        <tr>
-                            <th>Точка</th>
-                            <th>Согласование Локации</th>
-                            <th>Проектирование</th>
-                            <th>Строительство</th>
-                            <th>Открытие</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<!-- ==========================================
-     СТРАНИЦА 2: КАЛЬКУЛЯТОР ПРЕМИЙ
-     ========================================== -->
-<div id="calculator-page" class="page">
-    <div class="page-container wide">
-        <div class="calculator-card">
-            
-            <!-- Вкладки калькулятора -->
-            <div class="tabs">
-                <button class="calc-tab-btn active" data-calctab="manager">📋 Менеджер (допы 3.5%)</button>
-                <button class="calc-tab-btn" data-calctab="lead">⭐ Ведущий менеджер (допы 3.8%)</button>
-            </div>
-
-            <!-- Вкладка Менеджер -->
-            <div id="managerTab" class="calc-tab-content active-tab">
-                <h2 class="calc-card-header">🧑‍💼 Менеджер — премии за роботов и монтаж</h2>
-                <div class="desc">🔹 % с доп. оборудования: 3,5% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж по фиксированной шкале (1→0.15%, 2→0.25% ... 15→1.1%)</div>
-                
-                <div class="fixed-fields">
-                    <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-manager" placeholder="Оклад" value="0" step="any"></div>
-                    <div class="extra-field"><label>🛠️ Стоимость доп. оборудования</label><input type="number" class="extra-manager" placeholder="Сумма" value="0" step="any"></div>
-                    <div class="info-cards">
-                        <div class="salary-card"><span>Оклад</span><div class="salary-amount" id="managerSalaryDisplay">0.00 ₽</div></div>
-                        <div class="extra-card"><span>Премия за допы (3.5%)</span><div class="extra-amount" id="managerExtraDisplay">0.00 ₽</div></div>
-                    </div>
-                </div>
-
-                <div class="table-header-tools">
-                    <div class="btn-group">
-                        <button class="add-robot-btn" id="addManagerRobot">➕ Добавить робота</button>
-                        <button class="reset-prices-btn" id="resetManagerPrices">🔄 Обнулить цены</button>
-                        <button class="delete-all-btn" id="deleteManagerAll">🗑️ Удалить всех</button>
-                    </div>
-                    <div class="robot-counter" id="managerCounter">Роботов: 1 / 15</div>
-                </div>
-                <div class="table-wrapper">
-                    <table class="robot-table" id="managerTable">
-                        <thead>
-                            <tr><th>Робот + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия (сумма × %)</th><th></th></tr>
-                        </thead>
-                        <tbody id="managerTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="summary-panel">
-                    <div>✨ ИТОГОВАЯ ВЫПЛАТА (оклад + допы + премии роботов+монтаж):</div>
-                    <div class="total-box">💰 <span id="managerTotal">0.00</span></div>
-                </div>
-            </div>
-
-            <!-- Вкладка Ведущий менеджер -->
-            <div id="leadTab" class="calc-tab-content">
-                <h2 class="calc-card-header">⭐ Ведущий менеджер — премии за роботов и монтаж</h2>
-                <div class="desc">🔹 % с доп. оборудования: 3,8% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж: 1→0.2%, 2→0.3% ... 15→1.2%</div>
-                
-                <div class="fixed-fields">
-                    <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-lead" placeholder="Оклад" value="0" step="any"></div>
-                    <div class="extra-field"><label>🛠️ Стоимость доп. оборудования</label><input type="number" class="extra-lead" placeholder="Сумма" value="0" step="any"></div>
-                    <div class="info-cards">
-                        <div class="salary-card"><span>Оклад</span><div class="salary-amount" id="leadSalaryDisplay">0.00 ₽</div></div>
-                        <div class="extra-card"><span>Премия за допы (3.8%)</span><div class="extra-amount" id="leadExtraDisplay">0.00 ₽</div></div>
-                    </div>
-                </div>
-
-                <div class="table-header-tools">
-                    <div class="btn-group">
-                        <button class="add-robot-btn" id="addLeadRobot">➕ Добавить робота</button>
-                        <button class="reset-prices-btn" id="resetLeadPrices">🔄 Обнулить цены</button>
-                        <button class="delete-all-btn" id="deleteLeadAll">🗑️ Удалить всех</button>
-                    </div>
-                    <div class="robot-counter" id="leadCounter">Роботов: 1 / 15</div>
-                </div>
-                <div class="table-wrapper">
-                    <table class="robot-table" id="leadTable">
-                        <thead>
-                            <tr><th>Робот + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия (сумма × %)</th><th></th></tr>
-                        </thead>
-                        <tbody id="leadTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="summary-panel">
-                    <div>✨ ИТОГОВАЯ ВЫПЛАТА (оклад + допы + премии роботов+монтаж):</div>
-                    <div class="total-box">💰 <span id="leadTotal">0.00</span></div>
-                </div>
-            </div>
-
-            <div class="footer-note">* Для каждого робота: премия = (стоимость робота + стоимость монтажа) × процент. Максимум 15 позиций. Проценты по таблице из ТЗ.</div>
-        </div>
-    </div>
+    <div class="footer-note">✅ Все изменения сохраняются автоматически. Клик по легенде скрывает линию и цифры.</div>
 </div>
 
 <script>
-    /* =========================================================
-       1. ЛОГИКА ГЛАВНОЙ НАВИГАЦИИ (ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ)
-       ========================================================= */
-    const pages = {
-        dashboard: document.getElementById('dashboard-page'),
-        calculator: document.getElementById('calculator-page')
-    };
-    const mainNavBtns = document.querySelectorAll('.nav-btn');
+(function(){
+    const months = [];
+    for (let y=2025; y<=2030; y++) {
+        for (let m=0; m<12; m++) {
+            const names = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+            months.push({ year: y, monthIdx: m, label: `${names[m]} ${y}` });
+        }
+    }
+    const T = months.length;
 
-    function switchMainPage(pageId) {
-        Object.keys(pages).forEach(key => {
-            pages[key].classList.remove('active-page');
-        });
-        pages[pageId].classList.add('active-page');
+    // Глобальные массивы данных
+    let planOpenings, planConstr, planDesign, planLocations;
+    let factOpenings, factConstr, factDesign, factLocations;
+    let planMoika = 0, factMoika = 0;
+    let openYearsState = new Set();
+
+    // Инициализация данных (из LocalStorage или создание дефолтных)
+    function initDataStructures(forceReset = false) {
+        if (forceReset) localStorage.clear();
+
+        const storedPlanOpen = localStorage.getItem('portal_plan_openings');
         
-        mainNavBtns.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('data-page') === pageId) {
+        if (storedPlanOpen && !forceReset) {
+            planOpenings = JSON.parse(localStorage.getItem('portal_plan_openings'));
+            planConstr = JSON.parse(localStorage.getItem('portal_plan_constr'));
+            planDesign = JSON.parse(localStorage.getItem('portal_plan_design'));
+            planLocations = JSON.parse(localStorage.getItem('portal_plan_locations'));
+            
+            factOpenings = JSON.parse(localStorage.getItem('portal_fact_openings'));
+            factConstr = JSON.parse(localStorage.getItem('portal_fact_constr'));
+            factDesign = JSON.parse(localStorage.getItem('portal_fact_design'));
+            factLocations = JSON.parse(localStorage.getItem('portal_fact_locations'));
+            
+            planMoika = parseInt(localStorage.getItem('portal_plan_moika')) || 0;
+            factMoika = parseInt(localStorage.getItem('portal_fact_moika')) || 0;
+        } else {
+            // Базовый шаблон генерации
+            const pattern2026 = [4,4,5,5,5,5,6,6,7,7,7,7];
+            planOpenings = Array(T).fill(0);
+            for (let off=0; off<5; off++) {
+                const start = 12 + off*12;
+                for (let m=0; m<12; m++) planOpenings[start+m] = pattern2026[m] + off;
+            }
+            planConstr = Array(T).fill(0);
+            planDesign = Array(T).fill(0);
+            planLocations = Array(T).fill(0);
+            for (let i=0; i<T; i++) {
+                if (i+2 < T) planConstr[i] = planOpenings[i+2];
+                if (i+3 < T) planDesign[i] = planOpenings[i+3];
+                if (i+4 < T) planLocations[i] = planOpenings[i+4];
+            }
+            factOpenings = [...planOpenings];
+            factConstr = [...planConstr];
+            factDesign = [...planDesign];
+            factLocations = [...planLocations];
+            planMoika = 0; factMoika = 0;
+            saveToStorage();
+        }
+
+        document.getElementById('moikaInputPlan').value = planMoika;
+        document.getElementById('moikaInputFact').value = factMoika;
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('portal_plan_openings', JSON.stringify(planOpenings));
+        localStorage.setItem('portal_plan_constr', JSON.stringify(planConstr));
+        localStorage.setItem('portal_plan_design', JSON.stringify(planDesign));
+        localStorage.setItem('portal_plan_locations', JSON.stringify(planLocations));
+        localStorage.setItem('portal_fact_openings', JSON.stringify(factOpenings));
+        localStorage.setItem('portal_fact_constr', JSON.stringify(factConstr));
+        localStorage.setItem('portal_fact_design', JSON.stringify(factDesign));
+        localStorage.setItem('portal_fact_locations', JSON.stringify(factLocations));
+        localStorage.setItem('portal_plan_moika', planMoika);
+        localStorage.setItem('portal_fact_moika', factMoika);
+    }
+
+    function computeCumulative(data) {
+        let cum = [], sum = 0;
+        for (let i=0; i<T; i++) { sum += data[i]; cum.push(sum); }
+        return cum;
+    }
+
+    function getYearlyData(open, constr, design, loc) {
+        const map = new Map();
+        for (let i=0; i<T; i++) {
+            const y = months[i].year;
+            if (y<2025 || y>2030) continue;
+            if (!map.has(y)) map.set(y, { loc:0, des:0, constr:0, open:0, months:[] });
+            const d = map.get(y);
+            d.loc += loc[i];
+            d.des += design[i];
+            d.constr += constr[i];
+            d.open += open[i];
+            d.months.push({ label: months[i].label, loc: loc[i], des: design[i], constr: constr[i], open: open[i] });
+        }
+        return map;
+    }
+
+    function makeAnnotations(labels, data, offsetY, color, traceName) {
+        const annos = [];
+        const indices = [];
+        for (let i=0; i<T; i+=3) indices.push(i);
+        if ((T - 1) % 3 !== 0) indices.push(T - 1);
+
+        for (let i of indices) {
+            if (data[i] !== undefined) {
+                annos.push({
+                    x: labels[i], y: data[i], text: data[i].toString(),
+                    showarrow: true, arrowhead: 2, arrowsize: 0.5, arrowwidth: 1,
+                    arrowcolor: color, ax: 0, ay: offsetY,
+                    bgcolor: 'rgba(255,255,240,0.85)', bordercolor: color, borderwidth: 0.8,
+                    font: { size: 8, color: color },
+                    traceName: traceName
+                });
+            }
+        }
+        return annos;
+    }
+
+    function makeDeltaAnnotations(labels, planCum, factCum, traceName) {
+        const annos = [];
+        const indices = [];
+        for (let i=0; i<T; i+=3) indices.push(i);
+        if ((T - 1) % 3 !== 0) indices.push(T - 1);
+
+        for (let i of indices) {
+            if (planCum[i] !== undefined && factCum[i] !== undefined) {
+                const diff = factCum[i] - planCum[i];
+                const sign = diff >= 0 ? '+' : '';
+                const text = `<b>${sign}${diff}</b>`;
+                const color = diff >= 0 ? '#10b981' : '#ef4444';
+                
+                annos.push({
+                    x: labels[i], y: factCum[i], text: text,
+                    showarrow: false, ax: 0, ay: 14, 
+                    font: { size: 8, color: color },
+                    bgcolor: 'rgba(255,255,255,0.95)', bordercolor: color, borderwidth: 1,
+                    traceName: traceName
+                });
+            }
+        }
+        return annos;
+    }
+
+    function bindLegendClick(divId, masterAnnotations) {
+        const el = document.getElementById(divId);
+        if (!el) return;
+        
+        el.removeAllListeners && el.removeAllListeners('plotly_legendclick');
+        el.on('plotly_legendclick', function(data) {
+            const curveIdx = data.curveNumber;
+            const clickedTrace = data.data[curveIdx];
+            const nextVisible = (clickedTrace.visible === 'legendonly') ? true : 'legendonly';
+            
+            const visibleAnnos = masterAnnotations.filter(anno => {
+                const tIdx = data.data.findIndex(t => t.name === anno.traceName);
+                if (tIdx === curveIdx) return nextVisible === true;
+                return data.data[tIdx].visible !== 'legendonly';
+            });
+            
+            Plotly.update(divId, { visible: nextVisible }, { annotations: visibleAnnos }, [curveIdx]);
+            return false;
+        });
+    }
+
+    function renderPlan() {
+        const totalOpen = planOpenings.reduce((a,b)=>a+b,0);
+        const totalCon = planConstr.reduce((a,b)=>a+b,0);
+        const totalDes = planDesign.reduce((a,b)=>a+b,0);
+        const totalLoc = planLocations.reduce((a,b)=>a+b,0);
+        document.getElementById('kpiContainerPlan').innerHTML = `
+            <div class="kpi-card"><h3>🔍 Локации</h3><div class="kpi-value">${totalLoc}</div></div>
+            <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
+            <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
+            <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
+            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + planMoika}</div></div>
+        `;
+
+        const yearly = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
+        const years = [2025,2026,2027,2028,2029,2030];
+        let html = `<div class="years-title">📆 План по годам (редактируемый)</div>`;
+        for (let y of years) {
+            const d = yearly.get(y);
+            if (!d) continue;
+            const isOpen = openYearsState.has('p' + y);
+            html += `<div class="year-item"><div class="year-header" data-year-plan="${y}"><span>📅 ${y} ${y===2025?'(Подготовка)':''}</span><div class="year-summary"><span>🔍 ${d.loc}</span>|<span>🎨 ${d.des}</span>|<span>🏗️ ${d.constr}</span>|<span>🚪 ${d.open}</span></div></div>
+            <div class="year-details ${isOpen?'open':''}" id="plan-details-${y}"><table class="data-table"><thead><tr><th>Месяц</th><th>🔍</th><th>🎨</th><th>🏗️</th><th>🚪</th></tr></thead><tbody>`;
+            for (let m of d.months) {
+                const idx = months.findIndex(item => item.label === m.label);
+                html += `<tr data-idx="${idx}">
+                    <td>${m.label}</td>
+                    <td><input type="number" class="plan-input plan-loc" value="${m.loc}" step="1" min="0"></td>
+                    <td><input type="number" class="plan-input plan-des" value="${m.des}" step="1" min="0"></td>
+                    <td><input type="number" class="plan-input plan-con" value="${m.constr}" step="1" min="0"></td>
+                    <td><input type="number" class="plan-input plan-open" value="${m.open}" step="1" min="0"></td>
+                </tr>`;
+            }
+            html += `</tbody></table></div></div>`;
+        }
+        html += `<div class="total-row">🧼 Мойки: ${planMoika} | 📊 Прогноз: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + planMoika}</div>`;
+        document.getElementById('yearsContainerPlan').innerHTML = html;
+        
+        document.querySelectorAll('#yearsContainerPlan .plan-input').forEach(inp => inp.addEventListener('change', handlePlanChange));
+        for (let y of years) {
+            const h = document.querySelector(`.year-header[data-year-plan="${y}"]`);
+            const d = document.getElementById(`plan-details-${y}`);
+            if (h && d) h.onclick = (e) => { e.stopPropagation(); d.classList.toggle('open'); if(d.classList.contains('open')) openYearsState.add('p'+y); else openYearsState.delete('p'+y); };
+        }
+
+        const labels = months.map(m=>m.label);
+        const cumO = computeCumulative(planOpenings);
+        const cumC = computeCumulative(planConstr);
+        const cumD = computeCumulative(planDesign);
+        const cumL = computeCumulative(planLocations);
+        
+        const el = document.getElementById('planChart');
+        let currentVis = [true, true, true, true];
+        if (el && el.data && el.data.length === 4) currentVis = el.data.map(t => t.visible);
+
+        const traces = [
+            { x: labels, y: cumL, name: 'Локации', mode: 'lines+markers', line: { color: '#10b981', width: 2.5, dash: 'dash' }, marker: { size: 2 }, visible: currentVis[0] },
+            { x: labels, y: cumD, name: 'Дизайн', mode: 'lines+markers', line: { color: '#8b5cf6', width: 2.5, dash: 'dashdot' }, marker: { size: 2 }, visible: currentVis[1] },
+            { x: labels, y: cumC, name: 'Стройка', mode: 'lines+markers', line: { color: '#d97706', width: 2.5, dash: 'dot' }, marker: { size: 2 }, visible: currentVis[2] },
+            { x: labels, y: cumO, name: 'Открытия', mode: 'lines+markers', line: { color: '#0f5b7a', width: 3 }, marker: { size: 3 }, visible: currentVis[3] }
+        ];
+        
+        const allAnnotations = [
+            ...makeAnnotations(labels, cumL, -35, '#10b981', 'Локации'),
+            ...makeAnnotations(labels, cumD, 40, '#8b5cf6', 'Дизайн'),
+            ...makeAnnotations(labels, cumC, -40, '#d97706', 'Стройка'),
+            ...makeAnnotations(labels, cumO, 35, '#0f5b7a', 'Открытия')
+        ];
+
+        const activeAnnos = allAnnotations.filter(anno => {
+            const tIdx = traces.findIndex(t => t.name === anno.traceName);
+            return tIdx === -1 || traces[tIdx].visible !== 'legendonly';
+        });
+
+        const layout = {
+            xaxis: { tickangle: -45, tickvals: labels.filter((_,i)=>i%3===0), tickfont: { size: 8 } },
+            yaxis: { title: 'Накопленное количество' },
+            legend: { orientation: 'h', y: 1.05 },
+            margin: { t: 40, l: 50, r: 30, b: 70 },
+            annotations: activeAnnos
+        };
+        
+        Plotly.react('planChart', traces, layout);
+        bindLegendClick('planChart', allAnnotations);
+    }
+
+    function handlePlanChange(e) {
+        const inp = e.target;
+        const row = inp.closest('tr');
+        const idx = parseInt(row.dataset.idx);
+        if (isNaN(idx)) return;
+        if (inp.classList.contains('plan-loc')) planLocations[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('plan-des')) planDesign[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('plan-con')) planConstr[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('plan-open')) planOpenings[idx] = parseInt(inp.value) || 0;
+        saveToStorage();
+        renderPlan();
+        renderComparisonCharts();
+    }
+
+    function renderFact() {
+        const totalOpen = factOpenings.reduce((a,b)=>a+b,0);
+        const totalCon = factConstr.reduce((a,b)=>a+b,0);
+        const totalDes = factDesign.reduce((a,b)=>a+b,0);
+        const totalLoc = factLocations.reduce((a,b)=>a+b,0);
+        document.getElementById('kpiContainerFact').innerHTML = `
+            <div class="kpi-card"><h3>🔍 Локации</h3><div class="kpi-value">${totalLoc}</div></div>
+            <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
+            <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
+            <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
+            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + factMoika}</div></div>
+        `;
+
+        const yearlyPlan = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
+        const yearlyFact = getYearlyData(factOpenings, factConstr, factDesign, factLocations);
+        const years = [2025,2026,2027,2028,2029,2030];
+        let html = `<div class="years-title">📆 Факт по годам (нажмите, редактируйте)</div>`;
+        for (let y of years) {
+            const p = yearlyPlan.get(y);
+            const f = yearlyFact.get(y);
+            if (!p) continue;
+            const isOpen = openYearsState.has('f' + y);
+            html += `<div class="year-item"><div class="year-header" data-year-fact="${y}"><span>📅 ${y} ${y===2025?'(Подготовка)':''}</span><div class="year-summary"><span>🔍 ${f?.loc??0}/${p.loc}</span>|<span>🎨 ${f?.des??0}/${p.des}</span>|<span>🏗️ ${f?.constr??0}/${p.constr}</span>|<span>🚪 ${f?.open??0}/${p.open}</span></div></div>
+            <div class="year-details ${isOpen?'open':''}" id="fact-details-${y}">
+            <table class="data-table"><thead><tr><th>Месяц</th><th colspan="2">🔍</th><th colspan="2">🎨</th><th colspan="2">🏗️</th><th colspan="2">🚪</th></tr>
+            <tr><th></th><th>План</th><th>Факт</th><th>План</th><th>Факт</th><th>План</th><th>Факт</th><th>План</th><th>Факт</th></tr></thead><tbody>`;
+            for (let i=0; i<p.months.length; i++) {
+                const pm = p.months[i];
+                const fm = f?.months[i] || { loc:0, des:0, constr:0, open:0 };
+                const idx = months.findIndex(m => m.label === pm.label);
+                html += `<tr data-idx="${idx}">
+                    <td>${pm.label}</td>
+                    <td class="plan-value">${pm.loc}</td><td><input type="number" class="fact-input fact-loc" value="${fm.loc}" step="1" min="0"></td>
+                    <td class="plan-value">${pm.des}</td><td><input type="number" class="fact-input fact-des" value="${fm.des}" step="1" min="0"></td>
+                    <td class="plan-value">${pm.constr}</td><td><input type="number" class="fact-input fact-con" value="${fm.constr}" step="1" min="0"></td>
+                    <td class="plan-value">${pm.open}</td><td><input type="number" class="fact-input fact-open" value="${fm.open}" step="1" min="0"></td>
+                </tr>`;
+            }
+            html += `</tbody></table></div></div>`;
+        }
+        html += `<div class="total-row">🧼 Мойки: ${factMoika} | 📊 Факт открытий: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + factMoika}</div>`;
+        document.getElementById('yearsContainerFact').innerHTML = html;
+
+        document.querySelectorAll('#yearsContainerFact .fact-input').forEach(inp => inp.addEventListener('change', handleFactChange));
+        for (let y of years) {
+            const h = document.querySelector(`.year-header[data-year-fact="${y}"]`);
+            const d = document.getElementById(`fact-details-${y}`);
+            if (h && d) h.onclick = (e) => { e.stopPropagation(); d.classList.toggle('open'); if(d.classList.contains('open')) openYearsState.add('f'+y); else openYearsState.delete('f'+y); };
+        }
+    }
+
+    function handleFactChange(e) {
+        const inp = e.target;
+        const row = inp.closest('tr');
+        const idx = parseInt(row.dataset.idx);
+        if (isNaN(idx)) return;
+        if (inp.classList.contains('fact-loc')) factLocations[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('fact-des')) factDesign[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('fact-con')) factConstr[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('fact-open')) factOpenings[idx] = parseInt(inp.value) || 0;
+        saveToStorage();
+        updateFactSummaries();
+        renderComparisonCharts();
+    }
+
+    function updateFactSummaries() {
+        const totalOpen = factOpenings.reduce((a,b)=>a+b,0);
+        const totalCon = factConstr.reduce((a,b)=>a+b,0);
+        const totalDes = factDesign.reduce((a,b)=>a+b,0);
+        const totalLoc = factLocations.reduce((a,b)=>a+b,0);
+        document.getElementById('kpiContainerFact').innerHTML = `
+            <div class="kpi-card"><h3>🔍 Локации</h3><div class="kpi-value">${totalLoc}</div></div>
+            <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
+            <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
+            <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
+            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + factMoika}</div></div>
+        `;
+        const yearlyPlan = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
+        const yearlyFact = getYearlyData(factOpenings, factConstr, factDesign, factLocations);
+        for (let y of [2025,2026,2027,2028,2029,2030]) {
+            const p = yearlyPlan.get(y);
+            const f = yearlyFact.get(y);
+            if (!p) continue;
+            const hdr = document.querySelector(`.year-header[data-year-fact="${y}"]`);
+            if (hdr) {
+                const sum = hdr.querySelector('.year-summary');
+                if (sum) sum.innerHTML = `<span>🔍 ${f?.loc??0}/${p.loc}</span>|<span>🎨 ${f?.des??0}/${p.des}</span>|<span>🏗️ ${f?.constr??0}/${p.constr}</span>|<span>🚪 ${f?.open??0}/${p.open}</span>`;
+            }
+        }
+        const tr = document.querySelector('#yearsContainerFact .total-row');
+        if (tr) tr.innerHTML = `🧼 Мойки: ${factMoika} | 📊 Факт открытий: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + factMoika}`;
+    }
+
+    function renderComparisonCharts() {
+        const labels = months.map(m=>m.label);
+        
+        function buildChart(divId, title, planCum, factCum, planColor, factColor) {
+            const el = document.getElementById(divId);
+            let currentVis = [true, true];
+            if (el && el.data && el.data.length === 2) currentVis = el.data.map(t => t.visible);
+
+            const traces = [
+                { x: labels, y: planCum, name: 'План', mode: 'lines+markers', line: { color: planColor, width: 3 }, marker: { size: 3 }, visible: currentVis[0] },
+                { x: labels, y: factCum, name: 'Факт', mode: 'lines+markers', line: { color: factColor, width: 3, dash: 'dot' }, marker: { size: 4, symbol: 'diamond' }, visible: currentVis[1] }
+            ];
+            
+            const allAnnotations = [
+                ...makeAnnotations(labels, planCum, -35, planColor, 'План'),
+                ...makeAnnotations(labels, factCum, 35, factColor, 'Факт'),
+                ...makeDeltaAnnotations(labels, planCum, factCum, 'Факт')
+            ];
+
+            const activeAnnos = allAnnotations.filter(anno => {
+                const tIdx = traces.findIndex(t => t.name === anno.traceName);
+                return tIdx === -1 || traces[tIdx].visible !== 'legendonly';
+            });
+
+            const layout = {
+                title: { text: title, font: { size: 12 } },
+                xaxis: { tickangle: -45, tickvals: labels.filter((_,i)=>i%3===0), tickfont: { size: 8 } },
+                yaxis: { title: 'Накопленное количество' },
+                legend: { orientation: 'h', y: 1.08, xanchor: 'center', x: 0.5 },
+                margin: { t: 50, l: 50, r: 30, b: 70 },
+                annotations: activeAnnos
+            };
+            
+            Plotly.react(divId, traces, layout);
+            bindLegendClick(divId, allAnnotations);
+        }
+
+        buildChart('chartLocations', '🔍 Локации — план vs факт', computeCumulative(planLocations), computeCumulative(factLocations), '#10b981', '#f59e0b');
+        buildChart('chartDesign', '🎨 Дизайн — план vs факт', computeCumulative(planDesign), computeCumulative(factDesign), '#8b5cf6', '#f59e0b');
+        buildChart('chartConstruction', '🏗️ Стройка — план vs факт', computeCumulative(planConstr), computeCumulative(factConstr), '#d97706', '#f59e0b');
+        buildChart('chartOpenings', '🚪 Открытия — план vs факт', computeCumulative(planOpenings), computeCumulative(factOpenings), '#0f5b7a', '#f59e0b');
+    }
+
+    function updateAll() {
+        planMoika = parseInt(document.getElementById('moikaInputPlan').value) || 0;
+        factMoika = parseInt(document.getElementById('moikaInputFact').value) || 0;
+        saveToStorage();
+        renderPlan();
+        renderFact();
+        renderComparisonCharts();
+    }
+
+    function initTabs() {
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(btn => {
+            btn.onclick = () => {
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
                 btn.classList.add('active');
-            }
+                document.getElementById(`${tab}-tab`).classList.add('active');
+                if (tab === 'fact') {
+                    renderFact();
+                    renderComparisonCharts();
+                } else {
+                    renderPlan();
+                }
+            };
         });
     }
 
-    mainNavBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const pageId = btn.getAttribute('data-page');
-            if (pageId) switchMainPage(pageId);
-        });
+    document.getElementById('moikaInputPlan').addEventListener('input', updateAll);
+    document.getElementById('moikaInputFact').addEventListener('input', () => {
+        factMoika = parseInt(document.getElementById('moikaInputFact').value) || 0;
+        saveToStorage();
+        updateFactSummaries();
+        renderComparisonCharts();
     });
 
-
-    /* =========================================================
-       2. ЛОГИКА ДАШБОРДА ПАРТНЁРА (СТРАНИЦА 1)
-       ========================================================= */
-    function addDays(date, days) {
-        let result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-    }
-
-    function formatDate(dateObj) {
-        const d = String(dateObj.getDate()).padStart(2, '0');
-        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const y = dateObj.getFullYear();
-        return `${d}.${m}.${y}`;
-    }
-
-    const formatCurrency = (num) => {
-        return num.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₽';
+    document.getElementById('resetStorageBtn').onclick = () => {
+        if (confirm('Вы уверены, что хотите сбросить все измененные данные плана и факта к исходному шаблону?')) {
+            initDataStructures(true);
+            renderPlan();
+            renderFact();
+            renderComparisonCharts();
+        }
     };
 
-    function calculateDashFee() {
-        const originalPrice = parseFloat(document.getElementById('basePrice').value) || 0;
-        const vatRate = parseFloat(document.getElementById('vatRate').value) || 0;
-        const isNewPartner = document.getElementById('isNewPartner').checked;
-        const hasPortal = document.getElementById('hasPortal').checked;
-
-        let finalBasePrice = originalPrice;
-        if (!hasPortal && finalBasePrice > 1000000) finalBasePrice = 1000000;
-        if (!isNewPartner) finalBasePrice = finalBasePrice * 0.75;
-
-        const knowHow = finalBasePrice * 0.80; 
-        const taxable = finalBasePrice * 0.20; 
-        const vatAmount = taxable * (vatRate / 100); 
-        const total = finalBasePrice + vatAmount; 
-
-        document.getElementById('discountedBaseRes').innerText = formatCurrency(finalBasePrice);
-        document.getElementById('knowHowRes').innerText = formatCurrency(knowHow);
-        document.getElementById('taxableRes').innerText = formatCurrency(taxable);
-        document.getElementById('vatAmountRes').innerText = formatCurrency(vatAmount);
-        document.getElementById('totalRes').innerText = formatCurrency(total);
-    }
-
-    function calculateDashTimeline() {
-        const startDateStr = document.getElementById('startDate').value;
-        const count = parseInt(document.getElementById('pointCount').value) || 0;
-        const cityName = document.getElementById('cityName').value || "";
-        const partnerNum = document.getElementById('partnerNum').value || "";
-        
-        const daysBetween = parseInt(document.getElementById('daysBetween').value) || 0;
-        const searchDays = parseInt(document.getElementById('searchDays').value) || 0;
-        const projectDays = parseInt(document.getElementById('projectDays').value) || 0;
-        const buildDays = parseInt(document.getElementById('buildDays').value) || 0;
-        const openDays = parseInt(document.getElementById('openDays').value) || 0;
-
-        const tbody = document.getElementById('resultsBody');
-        tbody.innerHTML = '';
-
-        if (!startDateStr || count <= 0) return;
-
-        const [year, month, day] = startDateStr.split('-');
-        const baseDate = new Date(year, month - 1, day);
-
-        let currentOpeningDate = addDays(baseDate, searchDays + projectDays + buildDays + openDays);
-        let maxBuildDate = new Date(0);
-
-        for (let i = 1; i <= count; i++) {
-            let dateG = new Date(currentOpeningDate);
-            let dateF = addDays(dateG, -openDays);    
-            let dateE = addDays(dateF, -buildDays);   
-            let dateD = addDays(dateE, -projectDays); 
-
-            if (dateF > maxBuildDate) maxBuildDate = dateF;
-
-            const pointName = `${cityName} ${partnerNum}-${i}`.trim();
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${pointName}</td>
-                <td>${formatDate(dateD)}</td>
-                <td style="background-color: #eaf5eb;">${formatDate(dateE)}</td>
-                <td style="background-color: #eaf5eb;">${formatDate(dateF)}</td>
-                <td style="background-color: #eaf5eb;">${formatDate(dateG)}</td>
-            `;
-            tbody.appendChild(tr);
-            currentOpeningDate = addDays(currentOpeningDate, daysBetween);
-        }
-
-        const diffTime = maxBuildDate - baseDate;
-        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); 
-        const coverageYears = diffDays / 365;
-
-        document.getElementById('coverageResult').innerText = coverageYears.toFixed(2).replace('.', ',');
-    }
-
-    function calculateDashAll() {
-        calculateDashFee();
-        calculateDashTimeline();
-    }
-
-
-    /* =========================================================
-       3. ЛОГИКА КАЛЬКУЛЯТОРА ПРЕМИЙ (СТРАНИЦА 2)
-       ========================================================= */
-    const MANAGER_ROBOT_PERCENTS = [0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95,1.05,1.05,1.05,1.1,1.1,1.1];
-    const LEAD_ROBOT_PERCENTS   = [0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.2,1.2,1.2,1.2];
-    const MAX_ROBOTS = 15;
-    const EXTRA_PERCENT = { manager: 3.5, lead: 3.8 };
-
-    // Управление внутренними вкладками калькулятора (Менеджер / Ведущий)
-    const managerTab = document.getElementById('managerTab');
-    const leadTab = document.getElementById('leadTab');
-    const calcTabBtns = document.querySelectorAll('.calc-tab-btn');
-    
-    function switchCalcTab(tabId) {
-        managerTab.classList.remove('active-tab');
-        leadTab.classList.remove('active-tab');
-        if (tabId === 'manager') managerTab.classList.add('active-tab');
-        else leadTab.classList.add('active-tab');
-        
-        calcTabBtns.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('data-calctab') === tabId) btn.classList.add('active');
-        });
-    }
-    
-    calcTabBtns.forEach(btn => {
-        btn.addEventListener('click', () => switchCalcTab(btn.getAttribute('data-calctab')));
-    });
-
-    // Класс калькулятора (один код для обеих вкладок)
-    class RoleCalculator {
-        constructor(role, tbodyId, counterId, totalSpanId, salaryDisplayId, extraDisplayId, addBtnId, resetBtnId, deleteAllBtnId, salaryInputSelector, extraInputSelector) {
-            this.role = role;
-            this.tbody = document.getElementById(tbodyId);
-            this.counterSpan = document.getElementById(counterId);
-            this.totalSpan = document.getElementById(totalSpanId);
-            this.salaryDisplay = document.getElementById(salaryDisplayId);
-            this.extraDisplay = document.getElementById(extraDisplayId);
-            this.addBtn = document.getElementById(addBtnId);
-            this.resetBtn = document.getElementById(resetBtnId);
-            this.deleteAllBtn = document.getElementById(deleteAllBtnId);
-            this.salaryInput = document.querySelector(salaryInputSelector);
-            this.extraInput = document.querySelector(extraInputSelector);
-            
-            this.currentRobots = [];
-            
-            this.initFirstRobot();
-            this.bindEvents();
-            this.updateCounters();
-        }
-        
-        getPercentForRobot(robotNumber) {
-            if (robotNumber < 1 || robotNumber > MAX_ROBOTS) return 0;
-            return this.role === 'manager' ? MANAGER_ROBOT_PERCENTS[robotNumber-1] : LEAD_ROBOT_PERCENTS[robotNumber-1];
-        }
-        
-        createRobotRow(robotNumber) {
-            const percent = this.getPercentForRobot(robotNumber);
-            const percentFormatted = percent.toFixed(2).replace('.', ',') + '%';
-            const tr = document.createElement('tr');
-            
-            tr.innerHTML = `
-                <td class="robot-name-cell">🤖 Робот ${robotNumber} + монтаж</td>
-                <td><input type="number" placeholder="Цена робота" value="0" step="any" class="robot-price-input"></td>
-                <td><input type="number" placeholder="Монтаж" value="0" step="any" class="install-price-input"></td>
-                <td class="percent-cell">${percentFormatted}</td>
-                <td><span class="premium-badge">0.00</span></td>
-                <td><button class="delete-row-btn">✖</button></td>
-            `;
-            
-            this.tbody.appendChild(tr);
-            
-            const priceRobot = tr.querySelector('.robot-price-input');
-            const priceInstall = tr.querySelector('.install-price-input');
-            const premiumSpan = tr.querySelector('.premium-badge');
-            const delBtn = tr.querySelector('.delete-row-btn');
-            
-            const robotObj = { robotNumber, rowEl: tr, priceRobotInput: priceRobot, priceInstallInput: priceInstall, premiumSpan };
-            
-            const updateHandler = () => { this.updateSinglePremium(robotObj); this.calculateGrandTotal(); };
-            priceRobot.addEventListener('input', updateHandler);
-            priceInstall.addEventListener('input', updateHandler);
-            
-            delBtn.addEventListener('click', () => {
-                tr.remove();
-                this.currentRobots = this.currentRobots.filter(r => r.robotNumber !== robotNumber);
-                this.updateCounters();
-                this.calculateGrandTotal();
-            });
-            
-            return robotObj;
-        }
-        
-        updateSinglePremium(robot) {
-            const sum = (parseFloat(robot.priceRobotInput.value) || 0) + (parseFloat(robot.priceInstallInput.value) || 0);
-            const premium = sum * (this.getPercentForRobot(robot.robotNumber) / 100);
-            robot.premiumSpan.innerText = premium.toFixed(2);
-            return premium;
-        }
-        
-        calculateGrandTotal() {
-            const salary = parseFloat(this.salaryInput.value) || 0;
-            this.salaryDisplay.innerText = formatCurrency(salary);
-            
-            const extraCost = parseFloat(this.extraInput.value) || 0;
-            const extraPremium = extraCost * (EXTRA_PERCENT[this.role] / 100);
-            this.extraDisplay.innerText = formatCurrency(extraPremium);
-            
-            let totalRobots = 0;
-            for (const robot of this.currentRobots) {
-                const sum = (parseFloat(robot.priceRobotInput.value) || 0) + (parseFloat(robot.priceInstallInput.value) || 0);
-                totalRobots += sum * (this.getPercentForRobot(robot.robotNumber) / 100);
-            }
-            
-            this.totalSpan.innerText = (salary + extraPremium + totalRobots).toFixed(2);
-        }
-        
-        updateCounters() {
-            const count = this.currentRobots.length;
-            this.counterSpan.innerText = `Роботов: ${count} / ${MAX_ROBOTS}`;
-            if (this.addBtn) this.addBtn.disabled = (count >= MAX_ROBOTS);
-        }
-        
-        addRobot() {
-            if (this.currentRobots.length >= MAX_ROBOTS) return;
-            let freeNum = null;
-            for (let i=1; i<=MAX_ROBOTS; i++) {
-                if (!this.currentRobots.some(r => r.robotNumber === i)) { freeNum = i; break; }
-            }
-            if (!freeNum) return;
-            const newRobot = this.createRobotRow(freeNum);
-            this.currentRobots.push(newRobot);
-            this.updateSinglePremium(newRobot);
-            this.calculateGrandTotal();
-            this.updateCounters();
-        }
-        
-        resetAllPrices() {
-            this.currentRobots.forEach(robot => {
-                robot.priceRobotInput.value = '0';
-                robot.priceInstallInput.value = '0';
-                this.updateSinglePremium(robot);
-            });
-            this.calculateGrandTotal();
-        }
-        
-        deleteAllRobots() {
-            this.currentRobots.forEach(robot => robot.rowEl.remove());
-            this.currentRobots = [];
-            this.initFirstRobot();
-        }
-        
-        initFirstRobot() {
-            this.tbody.innerHTML = '';
-            const firstRobot = this.createRobotRow(1);
-            this.currentRobots.push(firstRobot);
-            this.updateSinglePremium(firstRobot);
-            this.calculateGrandTotal();
-            this.updateCounters();
-        }
-        
-        bindEvents() {
-            this.addBtn.addEventListener('click', () => this.addRobot());
-            this.resetBtn.addEventListener('click', () => this.resetAllPrices());
-            this.deleteAllBtn.addEventListener('click', () => this.deleteAllRobots());
-            this.salaryInput.addEventListener('input', () => this.calculateGrandTotal());
-            this.extraInput.addEventListener('input', () => this.calculateGrandTotal());
-        }
-    }
-
-
-    /* =========================================================
-       4. ЗАПУСК ВСЕХ СКРИПТОВ ПРИ ЗАГРУЗКЕ
-       ========================================================= */
-    window.onload = () => {
-        // Инициализация дашборда
-        calculateDashAll();
-
-        // Инициализация калькуляторов премий
-        new RoleCalculator('manager', 'managerTableBody', 'managerCounter', 'managerTotal', 'managerSalaryDisplay', 'managerExtraDisplay', 'addManagerRobot', 'resetManagerPrices', 'deleteManagerAll', '.salary-manager', '.extra-manager');
-        new RoleCalculator('lead', 'leadTableBody', 'leadCounter', 'leadTotal', 'leadSalaryDisplay', 'leadExtraDisplay', 'addLeadRobot', 'resetLeadPrices', 'deleteLeadAll', '.salary-lead', '.extra-lead');
-    };
+    initDataStructures();
+    initTabs();
+    renderPlan();
+})();
 </script>
 </body>
 </html>
