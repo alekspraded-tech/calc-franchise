@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Партнёрский портал и Моделирование сети</title>
-    <!-- Подключение библиотеки Plotly для графиков моделирования -->
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
         * {
@@ -820,7 +819,6 @@
 </head>
 <body>
 
-<!-- Главная навигация -->
 <div class="nav-container">
     <div class="nav-bar">
         <div class="logo">
@@ -835,7 +833,6 @@
     </div>
 </div>
 
-<!-- СТРАНИЦА 1 -->
 <div id="dashboard-page" class="page active-page">
     <div class="page-container">
         <div class="dashboard-header"><h1>Дашборд партнёра: Расчёты и Сроки</h1></div>
@@ -879,7 +876,7 @@
                 <div class="form-row">
                     <div class="form-group"><label>Поиск + аренда</label><input type="number" id="searchDays" class="dash-input" value="420" oninput="calculateDashAll()"></div>
                     <div class="form-group"><label>Проект</label><input type="number" id="projectDays" class="dash-input" value="30" oninput="calculateDashAll()"></div>
-                    <div class="form-group"><label>Стройка</label><input type="number" id="buildDays" class="dash-input" value="120" oninput="calculateDashAll()"></div>
+                    <div class="form-group"><label>Строительство</label><input type="number" id="buildDays" class="dash-input" value="120" oninput="calculateDashAll()"></div>
                     <div class="form-group"><label>Открытие</label><input type="number" id="openDays" class="dash-input" value="14" oninput="calculateDashAll()"></div>
                 </div>
                 <div class="header-metric"><h3>Срок покрытия города (лет)</h3><div class="value" id="coverageResult">0,00</div></div>
@@ -892,7 +889,6 @@
     </div>
 </div>
 
-<!-- СТРАНИЦА 2 -->
 <div id="calculator-page" class="page">
     <div class="page-container wide">
         <div class="calculator-card">
@@ -948,7 +944,6 @@
     </div>
 </div>
 
-<!-- СТРАНИЦА 3 -->
 <div id="network-model-page" class="page">
     <div class="page-container wide">
         <div class="network-dashboard">
@@ -957,6 +952,7 @@
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <span class="net-status-badge" id="netSyncStatus">● Проверка связи...</span>
                     <button class="net-btn-sync" id="netManualRefreshBtn">🔄 Обновить из базы</button>
+                    <button class="net-btn-sync" id="netResetBtn" style="background:#ef4444;">🔄 Сброс к шаблону</button>
                 </div>
             </div>
             <div class="network-sub-desc">🔍 Локация → 🎨 Дизайн → 🏗️ Стройка → 🚪 Открытие (сдвиги: +4, +3, +2 месяца). Внесение данных авто-синхронизируется с облаком.</div>
@@ -1025,9 +1021,7 @@
         if (pageId === 'network-model') {
             setTimeout(() => {
                 window.dispatchEvent(new Event('resize'));
-                renderNetworkPlan();
-                renderNetworkFact();
-                renderNetworkComparisonCharts();
+                refreshNetworkUI();
             }, 50);
         }
     }
@@ -1266,7 +1260,7 @@
     }
 
     /* =========================================================
-       4. ЛОГИКА СИМУЛЯТОРА СЕТИ (ПЛАН / ФАКТ) С ИСПРАВЛЕННЫМИ ОШИБКАМИ
+       4. ЛОГИКА СИМУЛЯТОРА РАЗВИТИЯ СЕТИ (СТАБИЛЬНАЯ)
        ========================================================= */
     const netMonths = [];
     for (let y = 2025; y <= 2030; y++) {
@@ -1282,14 +1276,24 @@
     let netCurrentWashes = 0; 
     let netOpenYearsState = new Set();
 
-    function initNetworkData() {
+    // ИСПРАВЛЕНО: Асинхронный запуск жестко привязан к цепочке выполнения во избежание Race Condition
+    function initNetworkData(forceReset = false) {
         updateSyncStatus('Проверка связи...', '#475569');
         const isDefaultUrl = FIREBASE_DB_URL.includes('portal-franchise-default-rtdb');
         
+        if (forceReset) {
+            localStorage.clear();
+            generateDefaultTemplate();
+            saveAndSyncNetwork();
+            updateSyncStatus('⚠️ База сброшена', '#f59e0b');
+            refreshNetworkUI();
+            return;
+        }
+
         if (FIREBASE_DB_URL && FIREBASE_DB_URL !== '' && !isDefaultUrl) {
             fetch(FIREBASE_DB_URL)
                 .then(res => {
-                    if (!res.ok) throw new Error('Ошибка подключения к облаку');
+                    if (!res.ok) throw new Error('Сбой сети');
                     return res.json();
                 })
                 .then(cloudData => {
@@ -1297,25 +1301,24 @@
                         applyExtractedData(cloudData);
                         updateSyncStatus('● База данных подключена (Облако)', '#10b981');
                     } else {
-                        // Если в облаке пусто - проверяем сначала локальную память браузера!
                         const stored = localStorage.getItem('net_plan_openings');
                         if (stored && JSON.parse(stored).length === netT) {
-                            loadFromLocalFallback('Облако было пустым. Восстановлено из бэкапа браузера.');
-                            saveAndSyncNetwork(); 
+                            loadFromLocalFallback('Облако пустое. Загружен локальный бэкап.');
+                            saveAndSyncNetwork();
                         } else {
                             generateDefaultTemplate();
                             saveAndSyncNetwork(); 
-                            updateSyncStatus('● Сформирован стартовый шаблон сети', '#10b981');
-                            refreshNetworkUI();
+                            updateSyncStatus('● Инициализация: Создан шаблон', '#10b981');
                         }
                     }
+                    refreshNetworkUI(); // Рисуем строго ПОСЛЕ получения данных
                 })
                 .catch(err => {
                     console.error('Ошибка БД, подключаем локальный бэкап:', err);
-                    loadFromLocalFallback('Режим локального бэкапа (Ошибка сети)');
+                    loadFromLocalFallback('Режим бэкапа (Офлайн)');
                 });
         } else {
-            loadFromLocalFallback(isDefaultUrl ? '⚠️ Хранение в браузере (Укажите личную ссылку на Firebase)' : 'Автономный режим (Без БД)');
+            loadFromLocalFallback(isDefaultUrl ? '⚠️ Хранение в браузере (Укажите личную ссылку)' : 'Автономный режим');
         }
     }
 
@@ -1340,7 +1343,7 @@
                     refreshNetworkUI();
                     return;
                 }
-            } catch(e) { console.error('Ошибка парсинга бэкапа', e); }
+            } catch(e) { console.error('Ошибка бэкапа', e); }
         }
         generateDefaultTemplate();
         document.querySelectorAll('.net-global-washes-input').forEach(inp => inp.value = netCurrentWashes);
@@ -1348,7 +1351,6 @@
         refreshNetworkUI();
     }
 
-    // ИСПРАВЛЕНО: Убрана фатальная ошибка циклического развертывания неопределенного массива фактов
     function generateDefaultTemplate() {
         const pattern2026 = [4,4,5,5,5,5,6,6,7,7,7,7];
         netPlanOpenings = Array(netT).fill(0);
@@ -1367,7 +1369,7 @@
         netFactOpenings = [...netPlanOpenings]; 
         netFactConstr = [...netPlanConstr];
         netFactDesign = [...netPlanDesign]; 
-        netFactLocations = [...netPlanLocations]; // Исправлено копирование (было netFactLocations)
+        netFactLocations = [...netPlanLocations]; 
         netCurrentWashes = 0;
     }
 
@@ -1383,7 +1385,6 @@
         netCurrentWashes = data.base || 0;
         
         document.querySelectorAll('.net-global-washes-input').forEach(inp => inp.value = netCurrentWashes);
-        refreshNetworkUI();
     }
 
     function updateSyncStatus(text, color) {
@@ -1415,10 +1416,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dump)
             })
-            .then(() => updateSyncStatus('● Изменения сохранены в облаке', '#10b981'))
+            .then(() => updateSyncStatus('● Синхронизировано в облаке', '#10b981'))
             .catch(err => {
-                console.error('Ошибка отправки в БД:', err);
-                updateSyncStatus('⚠️ Ошибка автосохранения в сеть', '#ef4444');
+                console.error(err);
+                updateSyncStatus('⚠️ Сбой автосохранения в сеть', '#ef4444');
             });
         }
     }
@@ -1592,17 +1593,88 @@
             margin: { t: 40, l: 50, r: 30, b: 70 },
             annotations: activeAnnos
         };
-        Plotly.react('netPlanChart', traces, layout);
-        bindNetworkLegendClick('netPlanChart', allAnnos);
+        
+        try {
+            Plotly.react('netPlanChart', traces, layout);
+            bindNetworkLegendClick('netPlanChart', allAnnos);
+        } catch(e) { console.warn(e); }
     }
 
+    function handleNetworkPlanChange(e) {
+        const inp = e.target;
+        const row = inp.closest('tr');
+        const idx = parseInt(row.getAttribute('data-netidx'));
+        if (isNaN(idx)) return;
+        if (inp.classList.contains('net-p-loc')) netPlanLocations[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-p-des')) netPlanDesign[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-p-con')) netPlanConstr[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-p-open')) netPlanOpenings[idx] = parseInt(inp.value) || 0;
+        
+        saveAndSyncNetwork();
+        renderNetworkPlan();
+        renderNetworkComparisonCharts();
+    }
+
+    function renderNetworkFact() {
+        const totalOpen = (netFactOpenings || []).reduce((a,b)=>a+b,0);
+        const totalCon = (netFactConstr || []).reduce((a,b)=>a+b,0);
+        const totalDes = (netFactDesign || []).reduce((a,b)=>a+b,0);
+        const totalLoc = (netFactLocations || []).reduce((a,b)=>a+b,0);
+
+        document.getElementById('netKpiContainerFact').innerHTML = `
+            <div class="net-kpi-card"><h3>🔍 Локации</h3><div class="net-kpi-value">${totalLoc}</div></div>
+            <div class="net-kpi-card"><h3>🎨 Дизайн</h3><div class="net-kpi-value">${totalDes}</div></div>
+            <div class="net-kpi-card"><h3>🏗️ Стройка</h3><div class="net-kpi-value">${totalCon}</div></div>
+            <div class="net-kpi-card"><h3>🚪 Открытия</h3><div class="net-kpi-value">${totalOpen}</div></div>
+            <div class="net-kpi-card net-total-card"><h3>⭐ ИТОГО СЕТЬ</h3><div class="net-kpi-value">${totalOpen + netCurrentWashes}</div></div>
+        `;
+
+        const yearlyPlan = getNetworkYearlyData(netPlanOpenings, netPlanConstr, netPlanDesign, netPlanLocations);
+        const yearlyFact = getNetworkYearlyData(netFactOpenings, netFactConstr, netFactDesign, netFactLocations);
+        const years = [2025, 2026, 2027, 2028, 2029, 2030];
+        
+        let html = `<div class="net-years-title">📆 Таблица факта по годам (нажмите для редактирования)</div>`;
+        for (let y of years) {
+            const p = yearlyPlan.get(y);
+            const f = yearlyFact.get(y);
+            if (!p) continue;
+            const isOpen = netOpenYearsState.has('f' + y);
+            html += `<div class="net-year-item"><div class="net-year-header" data-netfact-yr="${y}"><span>📅 ${y} ${y===2025?'(Подготовка)':''}</span><div class="net-year-summary"><span>🔍 ${f?.loc??0}/${p.loc}</span>|<span>🎨 ${f?.des??0}/${p.des}</span>|<span>🏗️ ${f?.constr??0}/${p.constr}</span>|<span>🚪 ${f?.open??0}/${p.open}</span></div></div>
+            <div class="net-year-details ${isOpen?'open':''}" id="net-fact-details-${y}">
+            <table class="net-data-table"><thead><tr><th>Месяц</th><th colspan="2">🔍 Локация</th><th colspan="2">🎨 Дизайн</th><th colspan="2">🏗️ Стройка</th><th colspan="2">🚪 Открытие</th></tr>
+            <tr><th></th><th>План</th><th>Факт</th><th>План</th><th>Факт</th><th>План</th><th>Факт</th><th>План</th><th>Факт</th></tr></thead><tbody>`;
+            for (let i = 0; i < p.months.length; i++) {
+                const pm = p.months[i];
+                const fm = f?.months[i] || { loc:0, des:0, constr:0, open:0 };
+                const idx = netMonths.findIndex(m => m.label === pm.label);
+                html += `<tr data-netidx="${idx}">
+                    <td>${pm.label}</td>
+                    <td class="net-plan-value-cell">${pm.loc}</td><td><input type="number" class="net-fact-input net-f-loc" value="${fm.loc}" step="1" min="0"></td>
+                    <td class="net-plan-value-cell">${pm.des}</td><td><input type="number" class="net-fact-input net-f-des" value="${fm.des}" step="1" min="0"></td>
+                    <td class="net-plan-value-cell">${pm.constr}</td><td><input type="number" class="net-fact-input net-f-con" value="${fm.constr}" step="1" min="0"></td>
+                    <td class="net-plan-value-cell">${pm.open}</td><td><input type="number" class="net-fact-input net-f-open" value="${fm.open}" step="1" min="0"></td>
+                </tr>`;
+            }
+            html += `</tbody></table></div></div>`;
+        }
+        html += `<div class="net-total-row">🧼 Текущие мойки: ${netCurrentWashes} | 📊 Новые открытия факта: ${totalOpen} | ⭐ ИТОГО СЕТЬ: ${totalOpen + netCurrentWashes}</div>`;
+        document.getElementById('netYearsContainerFact').innerHTML = html;
+
+        document.querySelectorAll('#netYearsContainerFact .net-fact-input').forEach(inp => inp.addEventListener('change', handleNetworkFactChange));
+        document.querySelectorAll('#netYearsContainerFact .net-year-header').forEach(h => {
+            const y = h.getAttribute('data-netfact-yr');
+            const d = document.getElementById(`net-fact-details-${y}`);
+            if(d) h.onclick = () => { d.classList.toggle('open'); if(d.classList.contains('open')) netOpenYearsState.add('f'+y); else netOpenYearsState.delete('f'+y); };
+        });
+    }
+
+    // ИСПРАВЛЕНО: Полное и чистое присвоение без скрытых китайских букв ( netFact稳定 полностью удалён)
     function handleNetworkFactChange(e) {
         const inp = e.target;
         const row = inp.closest('tr');
         const idx = parseInt(row.getAttribute('data-netidx'));
         if (isNaN(idx)) return;
         
-        // ИСПРАВЛЕНО: Полностью удалены опечатки в переменных, сброс NaN исключен
         if (inp.classList.contains('net-f-loc')) netFactLocations[idx] = parseInt(inp.value) || 0;
         if (inp.classList.contains('net-f-des')) netFactDesign[idx] = parseInt(inp.value) || 0;
         if (inp.classList.contains('net-f-con')) netFactConstr[idx] = parseInt(inp.value) || 0;
@@ -1674,8 +1746,10 @@
                 annotations: activeAnnos
             };
             
-            Plotly.react(divId, traces, layout);
-            bindNetworkLegendClick(divId, allAnnos);
+            try {
+                Plotly.react(divId, traces, layout);
+                bindNetworkLegendClick(divId, allAnnos);
+            } catch(e) { console.warn(e); }
         }
 
         buildChart('netChartLocations', '🔍 Локации — план vs факт', computeNetworkCumulative(netPlanLocations, netCurrentWashes), computeNetworkCumulative(netFactLocations, netCurrentWashes), '#10b981', '#f59e0b');
@@ -1731,6 +1805,15 @@
         document.getElementById('netManualRefreshBtn').onclick = () => {
             initNetworkData();
         };
+
+        const rstBtn = document.getElementById('netResetBtn');
+        if(rstBtn) {
+            rstBtn.onclick = () => {
+                if (confirm('Внимание! Все введенные планы и факты по годам будут безвозвратно удалены. Восстановить базовый корпоративный шаблон?')) {
+                    initNetworkData(true);
+                }
+            };
+        }
     };
 </script>
 </body>
