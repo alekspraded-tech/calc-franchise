@@ -2,8 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Партнёрский портал</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Партнёрский портал и Моделирование сети</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -564,6 +565,267 @@
             margin-top: 1rem;
         }
 
+        /* --- СТИЛИ ДЛЯ СИМУЛЯТОРА СЕТИ (СТРАНИЦА 3) --- */
+        .network-dashboard {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            padding: 16px 16px 24px;
+        }
+        .network-title-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #cbdde6;
+            padding-bottom: 12px;
+        }
+        .network-sub-desc {
+            color: #4a627a;
+            border-left: 4px solid #2563eb;
+            padding-left: 12px;
+            margin: 8px 0 20px;
+            font-size: 0.85rem;
+        }
+        .net-status-badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .net-tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .net-tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #5b6e8c;
+            cursor: pointer;
+            border-radius: 30px 30px 0 0;
+            transition: all 0.2s;
+        }
+        .net-tab-btn.active {
+            color: #2563eb;
+            background: #eff6ff;
+            border-bottom: 3px solid #2563eb;
+        }
+        .net-tab-pane {
+            display: none;
+        }
+        .net-tab-pane.active {
+            display: block;
+        }
+        .net-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .net-kpi-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 14px 12px;
+            border: 1px solid #e2edf2;
+            text-align: center;
+        }
+        .net-kpi-card h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #5b6e8c;
+            margin: 0 0 8px;
+        }
+        .net-kpi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1;
+        }
+        .net-total-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+        }
+        .net-total-card .net-kpi-value {
+            color: #facc15;
+        }
+        .net-moika-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 40px;
+            width: fit-content;
+            flex-wrap: wrap;
+        }
+        .net-moika-panel label {
+            font-weight: 700;
+            color: #1e2a3e;
+            font-size: 0.85rem;
+        }
+        .net-moika-panel input {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            width: 100px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+            font-weight: bold;
+        }
+        .net-years-container {
+            margin: 20px 0 20px;
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 12px 14px;
+            border: 1px solid #e0edf2;
+        }
+        .net-years-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: #0c4e6e;
+        }
+        .net-year-item {
+            margin-bottom: 10px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .net-year-header {
+            background: #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            gap: 12px;
+        }
+        .net-year-summary {
+            display: flex;
+            gap: 12px;
+            font-size: 0.75rem;
+            background: rgba(255,255,255,0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .net-year-details {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 4px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .net-year-details.open {
+            display: block;
+        }
+        .net-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            min-width: 600px;
+        }
+        .net-data-table th, .net-data-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .net-fact-input, .net-plan-input {
+            width: 65px;
+            padding: 6px 4px;
+            text-align: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+        .net-plan-input {
+            color: #1e40af;
+            font-weight: 600;
+            background: #f8fafc;
+        }
+        .net-plan-value-cell {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #1e40af;
+        }
+        .net-charts-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .net-chart-card {
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid #e9eef3;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .net-chart-title {
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .net-chart-container {
+            height: 380px;
+            width: 100%;
+            min-width: 1000px;
+        }
+        .net-total-row {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            background: #eef2ff;
+            padding: 10px 12px;
+            border-radius: 16px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .net-btn-sync {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .net-btn-sync:hover { background: #1d4ed8; }
+
+        @media (max-width: 650px) {
+            .net-kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .net-total-card { grid-column: span 2; }
+            .net-kpi-value { font-size: 1.4rem; }
+            .net-year-header { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 12px; }
+            .net-year-summary { width: 100%; justify-content: space-between; font-size: 0.7rem; padding: 4px 8px; }
+            .net-chart-container { height: 320px; min-width: 850px; }
+            .net-moika-panel { width: 100%; justify-content: space-between; border-radius: 16px; }
+        }
+
         @media (max-width: 750px) {
             .robot-price-input, .install-price-input { width: 85px; }
             .nav-bar { flex-direction: column; }
@@ -573,23 +835,20 @@
 </head>
 <body>
 
-<!-- Главная навигация -->
 <div class="nav-container">
     <div class="nav-bar">
         <div class="logo">
-            <span class="logo-icon">🤝</span>
-            <span class="logo-text">Портал партнёра</span>
+            <span class="logo-icon">🧼</span>
+            <span class="logo-text">Портал управления Portal</span>
         </div>
         <div class="nav-links">
             <button class="nav-btn active" data-page="dashboard">📊 Дашборд расчётов</button>
             <button class="nav-btn" data-page="calculator">💰 Калькулятор премии</button>
+            <button class="nav-btn" data-page="network-model">🚪 Моделирование сети</button>
         </div>
     </div>
 </div>
 
-<!-- ==========================================
-     СТРАНИЦА 1: ДАШБОРД ПАРТНЁРА
-     ========================================== -->
 <div id="dashboard-page" class="page active-page">
     <div class="page-container">
         
@@ -728,23 +987,18 @@
     </div>
 </div>
 
-<!-- ==========================================
-     СТРАНИЦА 2: КАЛЬКУЛЯТОР ПРЕМИЙ
-     ========================================== -->
 <div id="calculator-page" class="page">
     <div class="page-container wide">
         <div class="calculator-card">
             
-            <!-- Вкладки калькулятора -->
             <div class="tabs">
                 <button class="calc-tab-btn active" data-calctab="manager">📋 Менеджер (допы 3.5%)</button>
                 <button class="calc-tab-btn" data-calctab="lead">⭐ Ведущий менеджер (допы 3.8%)</button>
             </div>
 
-            <!-- Вкладка Менеджер -->
             <div id="managerTab" class="calc-tab-content active-tab">
                 <h2 class="calc-card-header">🧑‍💼 Менеджер — премии за роботов и монтаж</h2>
-                <div class="desc">🔹 % с доп. оборудования: 3,5% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж по фиксированной шкале (1→0.15%, 2→0.25% ... 15→1.1%)</div>
+                <div class="desc">🔹 % с доп. оборудования: 3,5% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж по фиксированной шкале</div>
                 
                 <div class="fixed-fields">
                     <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-manager" placeholder="Оклад" value="0" step="any"></div>
@@ -766,21 +1020,20 @@
                 <div class="table-wrapper">
                     <table class="robot-table" id="managerTable">
                         <thead>
-                            <tr><th>Робот + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия (сумма × %)</th><th></th></tr>
+                            <tr><th>Robot + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия (сумма × %)</th><th></th></tr>
                         </thead>
                         <tbody id="managerTableBody"></tbody>
                     </table>
                 </div>
                 <div class="summary-panel">
-                    <div>✨ ИТОГОВАЯ ВЫПЛАТА (оклад + допы + премии роботов+монтаж):</div>
+                    <div>✨ ИТОГОВАЯ ВЫПЛАТА:</div>
                     <div class="total-box">💰 <span id="managerTotal">0.00</span></div>
                 </div>
             </div>
 
-            <!-- Вкладка Ведущий менеджер -->
             <div id="leadTab" class="calc-tab-content">
                 <h2 class="calc-card-header">⭐ Ведущий менеджер — премии за роботов и монтаж</h2>
-                <div class="desc">🔹 % с доп. оборудования: 3,8% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж: 1→0.2%, 2→0.3% ... 15→1.2%</div>
+                <div class="desc">🔹 % с доп. оборудования: 3,8% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж по шкале ТЗ</div>
                 
                 <div class="fixed-fields">
                     <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-lead" placeholder="Оклад" value="0" step="any"></div>
@@ -808,38 +1061,95 @@
                     </table>
                 </div>
                 <div class="summary-panel">
-                    <div>✨ ИТОГОВАЯ ВЫПЛАТА (оклад + допы + премии роботов+монтаж):</div>
+                    <div>✨ ИТОГОВАЯ ВЫПЛАТА:</div>
                     <div class="total-box">💰 <span id="leadTotal">0.00</span></div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <div class="footer-note">* Для каждого робота: премия = (стоимость робота + стоимость монтажа) × процент. Максимум 15 позиций. Проценты по таблице из ТЗ.</div>
+<div id="network-model-page" class="page">
+    <div class="page-container wide">
+        <div class="network-dashboard">
+            <div class="network-title-box">
+                <h2 style="font-size:1.3rem; color:#1f3b4c; font-weight:700;">🚪 Симулятор развития и масштабирования сети</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span class="net-status-badge" id="netSyncStatus">● Проверка связи...</span>
+                    <button class="net-btn-sync" id="netManualRefreshBtn">🔄 Обновить из базы</button>
+                </div>
+            </div>
+            <div class="network-sub-desc">🔍 Локация → 🎨 Дизайн → 🏗️ Стройка → 🚪 Открытие (сдвиги: +4, +3, +2 месяца). Внесение данных авто-синхронизируется с облаком.</div>
+
+            <div class="net-tabs">
+                <button class="net-tab-btn active" data-nettab="plan">📊 План развития</button>
+                <button class="net-tab-btn" data-nettab="fact">📈 Фактические данные</button>
+            </div>
+
+            <div id="net-plan-subtab" class="net-tab-pane active">
+                <div class="net-moika-panel">
+                    <label>🧼 Текущее кол-во моек в сети (базис):</label>
+                    <input type="number" class="net-global-washes-input" value="0" step="1" min="0">
+                </div>
+                <div class="net-kpi-grid" id="netKpiContainerPlan"></div>
+                <div id="netYearsContainerPlan" class="net-years-container"></div>
+                <div class="net-chart-card">
+                    <div class="net-chart-title">📈 Накопление масштаба сети по плану развития</div>
+                    <div id="netPlanChart" class="net-chart-container"></div>
+                </div>
+            </div>
+
+            <div id="net-fact-subtab" class="net-tab-pane">
+                <div class="net-moika-panel">
+                    <label>🧼 Текущее кол-во моек в сети (базис):</label>
+                    <input type="number" class="net-global-washes-input" value="0" step="1" min="0">
+                </div>
+                <div class="net-kpi-grid" id="netKpiContainerFact"></div>
+                <div id="netYearsContainerFact" class="net-years-container"></div>
+                <div class="net-charts-grid">
+                    <div class="net-chart-card"><div class="net-chart-title">🔍 Локации — план vs факт</div><div id="netChartLocations" class="net-chart-container"></div></div>
+                    <div class="net-chart-card"><div class="net-chart-title">🎨 Дизайн — план vs факт</div><div id="netChartDesign" class="net-chart-container"></div></div>
+                    <div class="net-chart-card"><div class="net-chart-title">🏗️ Стройка — план vs факт</div><div id="netChartConstruction" class="net-chart-container"></div></div>
+                    <div class="net-chart-card"><div class="net-chart-title">🚪 Открытия — план vs факт</div><div id="netChartOpenings" class="net-chart-container"></div></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
     /* =========================================================
+       0. НАСТРОЙКА ОБЛАЧНОЙ БАЗЫ ДАННЫХ ДЛЯ КОМАНДЫ
+       ========================================================= */
+    const FIREBASE_DB_URL = 'https://portal-franchise-default-rtdb.firebaseio.com/network_data.json';
+
+    /* =========================================================
        1. ЛОГИКА ГЛАВНОЙ НАВИГАЦИИ (ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ)
        ========================================================= */
     const pages = {
         dashboard: document.getElementById('dashboard-page'),
-        calculator: document.getElementById('calculator-page')
+        calculator: document.getElementById('calculator-page'),
+        'network-model': document.getElementById('network-model-page')
     };
     const mainNavBtns = document.querySelectorAll('.nav-btn');
 
     function switchMainPage(pageId) {
-        Object.keys(pages).forEach(key => {
-            pages[key].classList.remove('active-page');
-        });
+        Object.keys(pages).forEach(key => pages[key].classList.remove('active-page'));
         pages[pageId].classList.add('active-page');
         
         mainNavBtns.forEach(btn => {
             btn.classList.remove('active');
-            if (btn.getAttribute('data-page') === pageId) {
-                btn.classList.add('active');
-            }
+            if (btn.getAttribute('data-page') === pageId) btn.classList.add('active');
         });
+
+        if (pageId === 'network-model') {
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+                renderNetworkPlan();
+                renderNetworkFact();
+                renderNetworkComparisonCharts();
+            }, 50);
+        }
     }
 
     mainNavBtns.forEach(btn => {
@@ -849,9 +1159,8 @@
         });
     });
 
-
     /* =========================================================
-       2. ЛОГИКА ДАШБОРДА ПАРТНЁРА (СТРАНИЦА 1)
+       2. ЛОГИКА ДАШБОРДА ПАРТНЁРА (СТРАНИЦА 1) [СОХРАНЕНО]
        ========================================================= */
     function addDays(date, days) {
         let result = new Date(date);
@@ -948,16 +1257,14 @@
         calculateDashTimeline();
     }
 
-
     /* =========================================================
-       3. ЛОГИКА КАЛЬКУЛЯТОРА ПРЕМИЙ (СТРАНИЦА 2)
+       3. ЛОГИКА КАЛЬКУЛЯТОРА ПРЕМИЙ (СТРАНИЦА 2) [СОХРАНЕНО]
        ========================================================= */
     const MANAGER_ROBOT_PERCENTS = [0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95,1.05,1.05,1.05,1.1,1.1,1.1];
     const LEAD_ROBOT_PERCENTS   = [0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.2,1.2,1.2,1.2];
     const MAX_ROBOTS = 15;
     const EXTRA_PERCENT = { manager: 3.5, lead: 3.8 };
 
-    // Управление внутренними вкладками калькулятора (Менеджер / Ведущий)
     const managerTab = document.getElementById('managerTab');
     const leadTab = document.getElementById('leadTab');
     const calcTabBtns = document.querySelectorAll('.calc-tab-btn');
@@ -978,7 +1285,6 @@
         btn.addEventListener('click', () => switchCalcTab(btn.getAttribute('data-calctab')));
     });
 
-    // Класс калькулятора (один код для обеих вкладок)
     class RoleCalculator {
         constructor(role, tbodyId, counterId, totalSpanId, salaryDisplayId, extraDisplayId, addBtnId, resetBtnId, deleteAllBtnId, salaryInputSelector, extraInputSelector) {
             this.role = role;
@@ -992,7 +1298,6 @@
             this.deleteAllBtn = document.getElementById(deleteAllBtnId);
             this.salaryInput = document.querySelector(salaryInputSelector);
             this.extraInput = document.querySelector(extraInputSelector);
-            
             this.currentRobots = [];
             
             this.initFirstRobot();
@@ -1027,8 +1332,8 @@
             const delBtn = tr.querySelector('.delete-row-btn');
             
             const robotObj = { robotNumber, rowEl: tr, priceRobotInput: priceRobot, priceInstallInput: priceInstall, premiumSpan };
-            
             const updateHandler = () => { this.updateSinglePremium(robotObj); this.calculateGrandTotal(); };
+            
             priceRobot.addEventListener('input', updateHandler);
             priceInstall.addEventListener('input', updateHandler);
             
@@ -1038,7 +1343,6 @@
                 this.updateCounters();
                 this.calculateGrandTotal();
             });
-            
             return robotObj;
         }
         
@@ -1062,7 +1366,6 @@
                 const sum = (parseFloat(robot.priceRobotInput.value) || 0) + (parseFloat(robot.priceInstallInput.value) || 0);
                 totalRobots += sum * (this.getPercentForRobot(robot.robotNumber) / 100);
             }
-            
             this.totalSpan.innerText = (salary + extraPremium + totalRobots).toFixed(2);
         }
         
@@ -1119,17 +1422,520 @@
         }
     }
 
+    /* =========================================================
+       4. ЛОГИКА ВКЛАДКИ МОДЕЛИРОВАНИЯ СЕТИ (ПЛАН / ФАКТ)
+       ========================================================= */
+    const netMonths = [];
+    for (let y = 2025; y <= 2030; y++) {
+        for (let m = 0; m < 12; m++) {
+            const names = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+            netMonths.push({ year: y, monthIdx: m, label: `${names[m]} ${y}` });
+        }
+    }
+    const netT = netMonths.length;
+
+    let netPlanOpenings, netPlanConstr, netPlanDesign, netPlanLocations;
+    let netFactOpenings, netFactConstr, netFactDesign, netFactLocations;
+    let netCurrentWashes = 0; 
+    let netOpenYearsState = new Set();
+
+    // Загрузка структуры данных (Локально ИЛИ Облако)
+    function initNetworkData() {
+        updateSyncStatus('Проверка связи...', '#475569');
+        
+        if (FIREBASE_DB_URL && FIREBASE_DB_URL !== '') {
+            fetch(FIREBASE_DB_URL)
+                .then(res => res.json())
+                .then(cloudData => {
+                    // ИСПРАВЛЕНО: Проверяем, что облачные данные существуют и массивы имеют правильную длину 72 месяца
+                    if (cloudData && cloudData.pOpen && cloudData.pOpen.length === netT) {
+                        applyExtractedData(cloudData);
+                        updateSyncStatus('● База данных подключена (Облако)', '#10b981');
+                    } else {
+                        // Если база пустая (null) - инициализируем базовыми цифрами и отправляем их обратно
+                        generateDefaultTemplate();
+                        saveAndSyncNetwork(); 
+                        updateSyncStatus('● Инициализация: Загружен стартовый шаблон сети', '#10b981');
+                        refreshNetworkUI();
+                    }
+                })
+                .catch(err => {
+                    console.error('Ошибка Firebase, переход на LocalStorage:', err);
+                    loadFromLocalFallback('Ошибка сети. Локальный режим');
+                });
+        } else {
+            loadFromLocalFallback('Автономный режим (Без БД)');
+        }
+    }
+
+    function loadFromLocalFallback(msg) {
+        const stored = localStorage.getItem('net_plan_openings');
+        if (stored && JSON.parse(stored).length === netT) {
+            netPlanOpenings = JSON.parse(localStorage.getItem('net_plan_openings'));
+            netPlanConstr = JSON.parse(localStorage.getItem('net_plan_constr'));
+            netPlanDesign = JSON.parse(localStorage.getItem('net_plan_design'));
+            netPlanLocations = JSON.parse(localStorage.getItem('net_plan_locations'));
+            netFactOpenings = JSON.parse(localStorage.getItem('net_fact_openings'));
+            netFactConstr = JSON.parse(localStorage.getItem('net_fact_constr'));
+            netFactDesign = JSON.parse(localStorage.getItem('net_fact_design'));
+            netFactLocations = JSON.parse(localStorage.getItem('net_fact_locations'));
+            netCurrentWashes = parseInt(localStorage.getItem('net_current_washes')) || 0;
+        } else {
+            generateDefaultTemplate();
+        }
+        document.querySelectorAll('.net-global-washes-input').forEach(inp => inp.value = netCurrentWashes);
+        updateSyncStatus(msg, '#f59e0b');
+        refreshNetworkUI();
+    }
+
+    function generateDefaultTemplate() {
+        const pattern2026 = [4,4,5,5,5,5,6,6,7,7,7,7];
+        netPlanOpenings = Array(netT).fill(0);
+        for (let off = 0; off < 5; off++) {
+            const start = 12 + off * 12;
+            for (let m = 0; m < 12; m++) netPlanOpenings[start + m] = pattern2026[m] + off;
+        }
+        netPlanConstr = Array(netT).fill(0); netPlanDesign = Array(netT).fill(0); netPlanLocations = Array(netT).fill(0);
+        for (let i = 0; i < netT; i++) {
+            if (i + 2 < netT) netPlanConstr[i] = netPlanOpenings[i + 2];
+            if (i + 3 < netT) netPlanDesign[i] = netPlanOpenings[i + 3];
+            if (i + 4 < netT) netPlanLocations[i] = netPlanOpenings[i + 4];
+        }
+        netFactOpenings = [...netPlanOpenings]; netFactConstr = [...netPlanConstr];
+        netFactDesign = [...netPlanDesign]; netFactLocations = [...netPlanLocations];
+        netCurrentWashes = 0;
+    }
+
+    function applyExtractedData(data) {
+        netPlanOpenings = data.pOpen || [];
+        netPlanConstr = data.pCon || [];
+        netPlanDesign = data.pDes || [];
+        netPlanLocations = data.pLoc || [];
+        netFactOpenings = data.fOpen || [];
+        netFactConstr = data.fCon || [];
+        netFactDesign = data.fDes || [];
+        netFactLocations = data.fLoc || [];
+        netCurrentWashes = data.base || 0;
+        
+        document.querySelectorAll('.net-global-washes-input').forEach(inp => inp.value = netCurrentWashes);
+        refreshNetworkUI();
+    }
+
+    function updateSyncStatus(text, color) {
+        const badge = document.getElementById('netSyncStatus');
+        if(badge) { badge.innerText = text; badge.style.color = color; }
+    }
+
+    function saveAndSyncNetwork() {
+        localStorage.setItem('net_plan_openings', JSON.stringify(netPlanOpenings));
+        localStorage.setItem('net_plan_constr', JSON.stringify(netPlanConstr));
+        localStorage.setItem('net_plan_design', JSON.stringify(netPlanDesign));
+        localStorage.setItem('net_plan_locations', JSON.stringify(netPlanLocations));
+        localStorage.setItem('net_fact_openings', JSON.stringify(netFactOpenings));
+        localStorage.setItem('net_fact_constr', JSON.stringify(netFactConstr));
+        localStorage.setItem('net_fact_design', JSON.stringify(netFactDesign));
+        localStorage.setItem('net_fact_locations', JSON.stringify(netFactLocations));
+        localStorage.setItem('net_current_washes', netCurrentWashes);
+
+        if (FIREBASE_DB_URL && FIREBASE_DB_URL !== '') {
+            const dump = {
+                pOpen: netPlanOpenings, pCon: netPlanConstr, pDes: netPlanDesign, pLoc: netPlanLocations,
+                fOpen: netFactOpenings, fCon: netFactConstr, fDes: netFactDesign, fLoc: netFactLocations,
+                base: netCurrentWashes
+            };
+            
+            fetch(FIREBASE_DB_URL, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dump)
+            })
+            .then(() => updateSyncStatus('● Изменения сохранены в облаке', '#10b981'))
+            .catch(err => {
+                console.error('Ошибка отправки в БД:', err);
+                updateSyncStatus('⚠️ Ошибка автосохранения в сеть', '#ef4444');
+            });
+        }
+    }
+
+    function refreshNetworkUI() {
+        if (pages['network-model'].classList.contains('active-page')) {
+            renderNetworkPlan();
+            renderNetworkFact();
+            renderNetworkComparisonCharts();
+        }
+    }
+
+    function computeNetworkCumulative(data, baseline) {
+        let cum = [], sum = baseline;
+        for (let i = 0; i < netT; i++) { sum += data[i]; cum.push(sum); }
+        return cum;
+    }
+
+    function getNetworkYearlyData(open, constr, design, loc) {
+        const map = new Map();
+        for (let i = 0; i < netT; i++) {
+            const y = netMonths[i].year;
+            if (y < 2025 || y > 2030) continue;
+            if (!map.has(y)) map.set(y, { loc:0, des:0, constr:0, open:0, months:[] });
+            const d = map.get(y);
+            d.loc += loc[i]; d.des += design[i]; d.constr += constr[i]; d.open += open[i];
+            d.months.push({ label: netMonths[i].label, loc: loc[i], des: design[i], constr: constr[i], open: open[i] });
+        }
+        return map;
+    }
+
+    function makeNetworkAnnotations(labels, data, offsetY, color, traceName) {
+        const annos = [];
+        const indices = [];
+        for (let i = 0; i < netT; i += 3) indices.push(i);
+        if ((netT - 1) % 3 !== 0) indices.push(netT - 1);
+
+        for (let i of indices) {
+            if (data[i] !== undefined) {
+                annos.push({
+                    x: labels[i], y: data[i], text: data[i].toString(),
+                    showarrow: true, arrowhead: 2, arrowsize: 0.5, arrowwidth: 1, arrowcolor: color, ax: 0, ay: offsetY,
+                    bgcolor: 'rgba(255,255,240,0.85)', bordercolor: color, borderwidth: 0.8,
+                    font: { size: 8, color: color }, traceName: traceName
+                });
+            }
+        }
+        return annos;
+    }
+
+    function makeNetworkDeltaAnnotations(labels, planCum, factCum, traceName) {
+        const annos = [];
+        const indices = [];
+        for (let i = 0; i < netT; i += 3) indices.push(i);
+        if ((netT - 1) % 3 !== 0) indices.push(netT - 1);
+
+        for (let i of indices) {
+            if (planCum[i] !== undefined && factCum[i] !== undefined) {
+                const diff = factCum[i] - planCum[i];
+                const sign = diff >= 0 ? '+' : '';
+                const text = `<b>${sign}${diff}</b>`;
+                const color = diff >= 0 ? '#10b981' : '#ef4444';
+                annos.push({
+                    x: labels[i], y: factCum[i], text: text,
+                    showarrow: false, ax: 0, ay: 14, font: { size: 8, color: color },
+                    bgcolor: 'rgba(255,255,255,0.95)', bordercolor: color, borderwidth: 1, traceName: traceName
+                });
+            }
+        }
+        return annos;
+    }
+
+    function bindNetworkLegendClick(divId, masterAnnotations) {
+        const el = document.getElementById(divId);
+        if (!el) return;
+        el.removeAllListeners && el.removeAllListeners('plotly_legendclick');
+        el.on('plotly_legendclick', function(data) {
+            const curveIdx = data.curveNumber;
+            const clickedTrace = data.data[curveIdx];
+            const nextVisible = (clickedTrace.visible === 'legendonly') ? true : 'legendonly';
+            const visibleAnnos = masterAnnotations.filter(anno => {
+                const tIdx = data.data.findIndex(t => t.name === anno.traceName);
+                if (tIdx === curveIdx) return nextVisible === true;
+                return data.data[tIdx].visible !== 'legendonly';
+            });
+            Plotly.update(divId, { visible: nextVisible }, { annotations: visibleAnnos }, [curveIdx]);
+            return false;
+        });
+    }
+
+    function renderNetworkPlan() {
+        const totalOpen = netPlanOpenings.reduce((a,b)=>a+b,0);
+        const totalCon = netPlanConstr.reduce((a,b)=>a+b,0);
+        const totalDes = netPlanDesign.reduce((a,b)=>a+b,0);
+        const totalLoc = netPlanLocations.reduce((a,b)=>a+b,0);
+        
+        document.getElementById('netKpiContainerPlan').innerHTML = `
+            <div class="net-kpi-card"><h3>🔍 Локации</h3><div class="net-kpi-value">${totalLoc}</div></div>
+            <div class="net-kpi-card"><h3>🎨 Дизайн</h3><div class="net-kpi-value">${totalDes}</div></div>
+            <div class="net-kpi-card"><h3>🏗️ Стройка</h3><div class="net-kpi-value">${totalCon}</div></div>
+            <div class="net-kpi-card"><h3>🚪 Открытия</h3><div class="net-kpi-value">${totalOpen}</div></div>
+            <div class="net-kpi-card net-total-card"><h3>⭐ ИТОГО СЕТЬ</h3><div class="net-kpi-value">${totalOpen + netCurrentWashes}</div></div>
+        `;
+
+        const yearly = getNetworkYearlyData(netPlanOpenings, netPlanConstr, netPlanDesign, netPlanLocations);
+        const years = [2025, 2026, 2027, 2028, 2029, 2030];
+        let html = `<div class="net-years-title">📆 Таблица плана по годам (редактируемая)</div>`;
+        for (let y of years) {
+            const d = yearly.get(y);
+            if (!d) continue;
+            const isOpen = netOpenYearsState.has('p' + y);
+            html += `<div class="net-year-item"><div class="net-year-header" data-netplan-yr="${y}"><span>📅 ${y} ${y===2025?'(Подготовка)':''}</span><div class="net-year-summary"><span>🔍 ${d.loc}</span>|<span>🎨 ${d.des}</span>|<span>🏗️ ${d.constr}</span>|<span>🚪 ${d.open}</span></div></div>
+            <div class="net-year-details ${isOpen?'open':''}" id="net-plan-details-${y}"><table class="net-data-table"><thead><tr><th>Месяц</th><th>🔍</th><th>🎨</th><th>🏗️</th><th>🚪</th></tr></thead><tbody>`;
+            for (let m of d.months) {
+                const idx = netMonths.findIndex(item => item.label === m.label);
+                html += `<tr data-netidx="${idx}">
+                    <td>${m.label}</td>
+                    <td><input type="number" class="net-plan-input net-p-loc" value="${m.loc}" step="1" min="0"></td>
+                    <td><input type="number" class="net-plan-input net-p-des" value="${m.des}" step="1" min="0"></td>
+                    <td><input type="number" class="net-plan-input net-p-con" value="${m.constr}" step="1" min="0"></td>
+                    <td><input type="number" class="net-plan-input net-p-open" value="${m.open}" step="1" min="0"></td>
+                </tr>`;
+            }
+            html += `</tbody></table></div></div>`;
+        }
+        html += `<div class="net-total-row">🧼 Текущие мойки: ${netCurrentWashes} | 📊 Новые открытия плана: ${totalOpen} | ⭐ ИТОГО СЕТЬ: ${totalOpen + netCurrentWashes}</div>`;
+        document.getElementById('netYearsContainerPlan').innerHTML = html;
+
+        document.querySelectorAll('#netYearsContainerPlan .net-plan-input').forEach(inp => inp.addEventListener('change', handleNetworkPlanChange));
+        document.querySelectorAll('#netYearsContainerPlan .net-year-header').forEach(h => {
+            const y = h.getAttribute('data-netplan-yr');
+            const d = document.getElementById(`net-plan-details-${y}`);
+            if(d) h.onclick = () => { d.classList.toggle('open'); if(d.classList.contains('open')) netOpenYearsState.add('p'+y); else netOpenYearsState.delete('p'+y); };
+        });
+
+        const labels = netMonths.map(m => m.label);
+        const cumO = computeNetworkCumulative(netPlanOpenings, netCurrentWashes);
+        const cumC = computeNetworkCumulative(netPlanConstr, netCurrentWashes);
+        const cumD = computeNetworkCumulative(netPlanDesign, netCurrentWashes);
+        const cumL = computeNetworkCumulative(netPlanLocations, netCurrentWashes);
+
+        const chartEl = document.getElementById('netPlanChart');
+        let currentVis = [true, true, true, true];
+        if (chartEl && chartEl.data && chartEl.data.length === 4) currentVis = chartEl.data.map(t => t.visible);
+
+        const traces = [
+            { x: labels, y: cumL, name: 'Локации', mode: 'lines+markers', line: { color: '#10b981', width: 2.5, dash: 'dash' }, marker: { size: 2 }, visible: currentVis[0] },
+            { x: labels, y: cumD, name: 'Дизайн', mode: 'lines+markers', line: { color: '#8b5cf6', width: 2.5, dash: 'dashdot' }, marker: { size: 2 }, visible: currentVis[1] },
+            { x: labels, y: cumC, name: 'Стройка', mode: 'lines+markers', line: { color: '#d97706', width: 2.5, dash: 'dot' }, marker: { size: 2 }, visible: currentVis[2] },
+            { x: labels, y: cumO, name: 'Открытия', mode: 'lines+markers', line: { color: '#0f5b7a', width: 3 }, marker: { size: 3 }, visible: currentVis[3] }
+        ];
+
+        const allAnnos = [
+            ...makeNetworkAnnotations(labels, cumL, -35, '#10b981', 'Локации'),
+            ...makeNetworkAnnotations(labels, cumD, 40, '#8b5cf6', 'Дизайн'),
+            ...makeNetworkAnnotations(labels, cumC, -40, '#d97706', 'Стройка'),
+            ...makeNetworkAnnotations(labels, cumO, 35, '#0f5b7a', 'Открытия')
+        ];
+
+        const activeAnnos = allAnnos.filter(anno => {
+            const tIdx = traces.findIndex(t => t.name === anno.traceName);
+            return tIdx === -1 || traces[tIdx].visible !== 'legendonly';
+        });
+
+        const layout = {
+            xaxis: { tickangle: -45, tickvals: labels.filter((_,i)=>i%3===0), tickfont: { size: 8 } },
+            yaxis: { title: 'Масштаб сети (накопительно, шт)' },
+            legend: { orientation: 'h', y: 1.05 },
+            margin: { t: 40, l: 50, r: 30, b: 70 },
+            annotations: activeAnnos
+        };
+        Plotly.react('netPlanChart', traces, layout);
+        bindNetworkLegendClick('netPlanChart', allAnnos);
+    }
+
+    function handleNetworkPlanChange(e) {
+        const inp = e.target;
+        const row = inp.closest('tr');
+        const idx = parseInt(row.getAttribute('data-netidx'));
+        if (isNaN(idx)) return;
+        if (inp.classList.contains('net-p-loc')) netPlanLocations[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-p-des')) netPlanDesign[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-p-con')) netPlanConstr[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-p-open')) netPlanOpenings[idx] = parseInt(inp.value) || 0;
+        
+        saveAndSyncNetwork();
+        renderNetworkPlan();
+        renderNetworkComparisonCharts();
+    }
+
+    function renderNetworkFact() {
+        const totalOpen = netFactOpenings.reduce((a,b)=>a+b,0);
+        const totalCon = netFactConstr.reduce((a,b)=>a+b,0);
+        const totalDes = netFactDesign.reduce((a,b)=>a+b,0);
+        const totalLoc = netFactLocations.reduce((a,b)=>a+b,0);
+
+        document.getElementById('netKpiContainerFact').innerHTML = `
+            <div class="net-kpi-card"><h3>🔍 Локации</h3><div class="net-kpi-value">${totalLoc}</div></div>
+            <div class="net-kpi-card"><h3>🎨 Дизайн</h3><div class="net-kpi-value">${totalDes}</div></div>
+            <div class="net-kpi-card"><h3>🏗️ Стройка</h3><div class="net-kpi-value">${totalCon}</div></div>
+            <div class="net-kpi-card"><h3>🚪 Открытия</h3><div class="net-kpi-value">${totalOpen}</div></div>
+            <div class="net-kpi-card net-total-card"><h3>⭐ ИТОГО СЕТЬ</h3><div class="net-kpi-value">${totalOpen + netCurrentWashes}</div></div>
+        `;
+
+        const yearlyPlan = getNetworkYearlyData(netPlanOpenings, netPlanConstr, netPlanDesign, netPlanLocations);
+        const yearlyFact = getNetworkYearlyData(netFactOpenings, netFactConstr, netFactDesign, netFactLocations);
+        const years = [2025, 2026, 2027, 2028, 2029, 2030];
+        
+        let html = `<div class="net-years-title">📆 Таблица факта по годам (нажмите для редактирования)</div>`;
+        for (let y of years) {
+            const p = yearlyPlan.get(y);
+            const f = yearlyFact.get(y);
+            if (!p) continue;
+            const isOpen = netOpenYearsState.has('f' + y);
+            html += `<div class="net-year-item"><div class="net-year-header" data-netfact-yr="${y}"><span>📅 ${y} ${y===2025?'(Подготовка)':''}</span><div class="net-year-summary"><span>🔍 ${f?.loc??0}/${p.loc}</span>|<span>🎨 ${f?.des??0}/${p.des}</span>|<span>🏗️ ${f?.constr??0}/${p.constr}</span>|<span>🚪 ${f?.open??0}/${p.open}</span></div></div>
+            <div class="net-year-details ${isOpen?'open':''}" id="net-fact-details-${y}">
+            <table class="net-data-table"><thead><tr><th>Месяц</th><th colspan="2">🔍 Локация</th><th colspan="2">🎨 Дизайн</th><th colspan="2">🏗️ Стройка</th><th colspan="2">🚪 Открытие</th></tr>
+            <tr><th></th><th>План</th><th>Факт</th><th>План</th><th>Факт</th><th>План</th><th>Факт</th><th>План</th><th>Факт</th></tr></thead><tbody>`;
+            for (let i = 0; i < p.months.length; i++) {
+                const pm = p.months[i];
+                const fm = f?.months[i] || { loc:0, des:0, constr:0, open:0 };
+                const idx = netMonths.findIndex(m => m.label === pm.label);
+                html += `<tr data-netidx="${idx}">
+                    <td>${pm.label}</td>
+                    <td class="net-plan-value-cell">${pm.loc}</td><td><input type="number" class="net-fact-input net-f-loc" value="${fm.loc}" step="1" min="0"></td>
+                    <td class="net-plan-value-cell">${pm.des}</td><td><input type="number" class="net-fact-input net-f-des" value="${fm.des}" step="1" min="0"></td>
+                    <td class="net-plan-value-cell">${pm.constr}</td><td><input type="number" class="net-fact-input net-f-con" value="${fm.constr}" step="1" min="0"></td>
+                    <td class="net-plan-value-cell">${pm.open}</td><td><input type="number" class="net-fact-input net-f-open" value="${fm.open}" step="1" min="0"></td>
+                </tr>`;
+            }
+            html += `</tbody></table></div></div>`;
+        }
+        html += `<div class="net-total-row">🧼 Текущие мойки: ${netCurrentWashes} | 📊 Новые открытия факта: ${totalOpen} | ⭐ ИТОГО СЕТЬ: ${totalOpen + netCurrentWashes}</div>`;
+        document.getElementById('netYearsContainerFact').innerHTML = html;
+
+        document.querySelectorAll('#netYearsContainerFact .net-fact-input').forEach(inp => inp.addEventListener('change', handleNetworkFactChange));
+        document.querySelectorAll('#netYearsContainerFact .net-year-header').forEach(h => {
+            const y = h.getAttribute('data-netfact-yr');
+            const d = document.getElementById(`net-fact-details-${y}`);
+            if(d) h.onclick = () => { d.classList.toggle('open'); if(d.classList.contains('open')) netOpenYearsState.add('f'+y); else netOpenYearsState.delete('f'+y); };
+        });
+    }
+
+    function handleNetworkFactChange(e) {
+        const inp = e.target;
+        const row = inp.closest('tr');
+        const idx = parseInt(row.getAttribute('data-netidx'));
+        if (isNaN(idx)) return;
+        
+        // ИСПРАВЛЕНО: Устранена опечатка в имени переменной массива стройки
+        if (inp.classList.contains('net-f-loc')) netFactLocations[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-f-des')) netFactDesign[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-f-con')) netFactConstr[idx] = parseInt(inp.value) || 0;
+        if (inp.classList.contains('net-f-open')) netFactOpenings[idx] = parseInt(inp.value) || 0;
+        
+        saveAndSyncNetwork();
+        updateNetworkFactSummaries();
+        renderNetworkComparisonCharts();
+    }
+
+    function updateNetworkFactSummaries() {
+        const totalOpen = netFactOpenings.reduce((a,b)=>a+b,0);
+        const totalCon = netFactConstr.reduce((a,b)=>a+b,0);
+        const totalDes = netFactDesign.reduce((a,b)=>a+b,0);
+        const totalLoc = netFactLocations.reduce((a,b)=>a+b,0);
+
+        document.getElementById('netKpiContainerFact').innerHTML = `
+            <div class="net-kpi-card"><h3>🔍 Локации</h3><div class="net-kpi-value">${totalLoc}</div></div>
+            <div class="net-kpi-card"><h3>🎨 Дизайн</h3><div class="net-kpi-value">${totalDes}</div></div>
+            <div class="net-kpi-card"><h3>🏗️ Стройка</h3><div class="net-kpi-value">${totalCon}</div></div>
+            <div class="net-kpi-card"><h3>🚪 Открытия</h3><div class="net-kpi-value">${totalOpen}</div></div>
+            <div class="net-kpi-card net-total-card"><h3>⭐ ИТОГО СЕТЬ</h3><div class="net-kpi-value">${totalOpen + netCurrentWashes}</div></div>
+        `;
+        const yearlyPlan = getNetworkYearlyData(netPlanOpenings, netPlanConstr, netPlanDesign, netPlanLocations);
+        const yearlyFact = getNetworkYearlyData(netFactOpenings, netFactConstr, netFactDesign, netFactLocations);
+        
+        for (let y of [2025, 2026, 2027, 2028, 2029, 2030]) {
+            const p = yearlyPlan.get(y); const f = yearlyFact.get(y); if (!p) continue;
+            const hdr = document.querySelector(`.net-year-header[data-netfact-yr="${y}"]`);
+            if (hdr) {
+                const sum = hdr.querySelector('.net-year-summary');
+                if (sum) sum.innerHTML = `<span>🔍 ${f?.loc??0}/${p.loc}</span>|<span>🎨 ${f?.des??0}/${p.des}</span>|<span>🏗️ ${f?.constr??0}/${p.constr}</span>|<span>🚪 ${f?.open??0}/${p.open}</span>`;
+            }
+        }
+        const tr = document.querySelector('#netYearsContainerFact .net-total-row');
+        if (tr) tr.innerHTML = `🧼 Текущие мойки: ${netCurrentWashes} | 📊 Новые открытия факта: ${totalOpen} | ⭐ ИТОГО СЕТЬ: ${totalOpen + netCurrentWashes}`;
+    }
+
+    function renderNetworkComparisonCharts() {
+        const labels = netMonths.map(m => m.label);
+        
+        function buildChart(divId, title, planCum, factCum, planColor, factColor) {
+            const el = document.getElementById(divId);
+            let currentVis = [true, true];
+            if (el && el.data && el.data.length === 2) currentVis = el.data.map(t => t.visible);
+
+            const traces = [
+                { x: labels, y: planCum, name: 'План', mode: 'lines+markers', line: { color: planColor, width: 3 }, marker: { size: 3 }, visible: currentVis[0] },
+                { x: labels, y: factCum, name: 'Факт', mode: 'lines+markers', line: { color: factColor, width: 3, dash: 'dot' }, marker: { size: 4, symbol: 'diamond' }, visible: currentVis[1] }
+            ];
+            
+            const allAnnos = [
+                ...makeNetworkAnnotations(labels, planCum, -35, planColor, 'План'),
+                ...makeNetworkAnnotations(labels, factCum, 35, factColor, 'Факт'),
+                ...makeNetworkDeltaAnnotations(labels, planCum, factCum, 'Факт')
+            ];
+
+            const activeAnnos = allAnnos.filter(anno => {
+                const tIdx = traces.findIndex(t => t.name === anno.traceName);
+                return tIdx === -1 || traces[tIdx].visible !== 'legendonly';
+            });
+
+            const layout = {
+                title: { text: title, font: { size: 12 } },
+                xaxis: { tickangle: -45, tickvals: labels.filter((_,i)=>i%3===0), tickfont: { size: 8 } },
+                yaxis: { title: 'Всего в сети (накопительно, шт)' },
+                legend: { orientation: 'h', y: 1.08, xanchor: 'center', x: 0.5 },
+                margin: { t: 50, l: 50, r: 30, b: 70 },
+                annotations: activeAnnos
+            };
+            
+            Plotly.react(divId, traces, layout);
+            bindNetworkLegendClick(divId, allAnnos);
+        }
+
+        buildChart('netChartLocations', '🔍 Локации — план vs факт', computeNetworkCumulative(netPlanLocations, netCurrentWashes), computeNetworkCumulative(netFactLocations, netCurrentWashes), '#10b981', '#f59e0b');
+        buildChart('netChartDesign', '🎨 Дизайн — план vs факт', computeNetworkCumulative(netPlanDesign, netCurrentWashes), computeNetworkCumulative(netFactDesign, netCurrentWashes), '#8b5cf6', '#f59e0b');
+        buildChart('netChartConstruction', '🏗️ Стройка — план vs факт', computeNetworkCumulative(netPlanConstr, netCurrentWashes), computeNetworkCumulative(netFactConstr, netCurrentWashes), '#d97706', '#f59e0b');
+        buildChart('netChartOpenings', '🚪 Открытия — план vs факт', computeNetworkCumulative(netPlanOpenings, netCurrentWashes), computeNetworkCumulative(netFactOpenings, netCurrentWashes), '#0f5b7a', '#f59e0b');
+    }
+
+    function syncGlobalWashes(val) {
+        netCurrentWashes = parseInt(val) || 0;
+        document.querySelectorAll('.net-global-washes-input').forEach(inp => inp.value = netCurrentWashes);
+        saveAndSyncNetwork();
+        renderNetworkPlan();
+        updateNetworkFactSummaries();
+        renderNetworkComparisonCharts();
+    }
+
+    function initNetworkSubTabs() {
+        const btns = document.querySelectorAll('.net-tab-btn');
+        btns.forEach(btn => {
+            btn.onclick = () => {
+                const target = btn.getAttribute('data-nettab');
+                document.querySelectorAll('.net-tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.net-tab-pane').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(`net-${target}-subtab`).classList.add('active');
+                if (target === 'fact') {
+                    renderNetworkFact();
+                    renderNetworkComparisonCharts();
+                } else {
+                    renderNetworkPlan();
+                }
+            };
+        });
+    }
 
     /* =========================================================
-       4. ЗАПУСК ВСЕХ СКРИПТОВ ПРИ ЗАГРУЗКЕ
+       5. ЗАПУСК И ИНИЦИАЛИЗАЦИЯ ВСЕХ СИСТЕМ (WINDOW.ONLOAD)
        ========================================================= */
     window.onload = () => {
-        // Инициализация дашборда
+        // 1. Старый дашборд расчётов сроков покрытий и взносов
         calculateDashAll();
 
-        // Инициализация калькуляторов премий
+        // 2. Старые калькуляторы окладно-премиальной части менеджеров
         new RoleCalculator('manager', 'managerTableBody', 'managerCounter', 'managerTotal', 'managerSalaryDisplay', 'managerExtraDisplay', 'addManagerRobot', 'resetManagerPrices', 'deleteManagerAll', '.salary-manager', '.extra-manager');
         new RoleCalculator('lead', 'leadTableBody', 'leadCounter', 'leadTotal', 'leadSalaryDisplay', 'leadExtraDisplay', 'addLeadRobot', 'resetLeadPrices', 'deleteLeadAll', '.salary-lead', '.extra-lead');
+
+        // 3. Подключение базы данных и отрисовка симулятора сети
+        initNetworkData();
+        initNetworkSubTabs();
+
+        // Слушатели сквозного инпута базового объема сети
+        document.querySelectorAll('.net-global-washes-input').forEach(inp => {
+            inp.addEventListener('input', (e) => syncGlobalWashes(e.target.value));
+        });
+
+        // Кнопка принудительного обновления из облака (если коллеги внесли правки)
+        document.getElementById('netManualRefreshBtn').onclick = () => {
+            initNetworkData();
+        };
     };
 </script>
 </body>
