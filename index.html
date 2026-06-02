@@ -815,22 +815,6 @@
             font-weight: 600;
         }
         .net-btn-sync:hover { background: #1d4ed8; }
-
-        @media (max-width: 650px) {
-            .net-kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .net-total-card { grid-column: span 2; }
-            .net-kpi-value { font-size: 1.4rem; }
-            .net-year-header { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 12px; }
-            .net-year-summary { width: 100%; justify-content: space-between; font-size: 0.7rem; padding: 4px 8px; }
-            .net-chart-container { height: 320px; min-width: 850px; }
-            .net-moika-panel { width: 100%; justify-content: space-between; border-radius: 16px; }
-        }
-
-        @media (max-width: 750px) {
-            .robot-price-input, .install-price-input { width: 85px; }
-            .nav-bar { flex-direction: column; }
-            .dash-top-row { flex-direction: column; }
-        }
     </style>
 </head>
 <body>
@@ -851,15 +835,10 @@
 
 <div id="dashboard-page" class="page active-page">
     <div class="page-container">
-        
-        <div class="dashboard-header">
-            <h1>Дашборд партнёра: Расчёты и Сроки</h1>
-        </div>
-
+        <div class="dashboard-header"><h1>Дашборд партнёра: Расчёты и Сроки</h1></div>
         <div class="dashboard-top-row">
             <div class="dash-card">
                 <h2>1. Паушальный взнос</h2>
-                
                 <div class="form-row">
                     <div class="form-group">
                         <label>Базовая стоимость (₽)</label>
@@ -870,145 +849,64 @@
                         <input type="number" id="vatRate" class="dash-input" value="22" min="0" max="100" oninput="calculateDashAll()">
                     </div>
                 </div>
-
-                <div class="benefits-info">
-                    <strong>Льготы:</strong> Скидка 25% со второй точки. Если в городе нет "Портала", взнос фиксируется на 1 000 000 ₽.
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="isNewPartner" checked onchange="calculateDashAll()">
-                    <label for="isNewPartner">Новый партнёр сети</label>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="hasPortal" checked onchange="calculateDashAll()">
-                    <label for="hasPortal">В городе есть точка «Портал»</label>
-                </div>
-
+                <div class="benefits-info"><strong>Льготы:</strong> Скидка 25% со второй точки. Если в городе нет "Портала", взнос фиксируется на 1 000 000 ₽.</div>
+                <div class="checkbox-group"><input type="checkbox" id="isNewPartner" checked onchange="calculateDashAll()"><label for="isNewPartner">Новый партнёр сети</label></div>
+                <div class="checkbox-group"><input type="checkbox" id="hasPortal" checked onchange="calculateDashAll()"><label for="hasPortal">В городе есть точка «Портал»</label></div>
                 <div class="results-block">
-                    <div class="result-row discounted">
-                        <span>Сумма с учетом льгот:</span>
-                        <span id="discountedBaseRes">0.00 ₽</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Ноу-хау (80% — без НДС):</span>
-                        <span id="knowHowRes">0.00 ₽</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Облагаемая база (20%):</span>
-                        <span id="taxableRes">0.00 ₽</span>
-                    </div>
-                    <div class="result-row">
-                        <span>Сумма НДС:</span>
-                        <span id="vatAmountRes">0.00 ₽</span>
-                    </div>
-                    <div class="result-row total">
-                        <span>Итоговая стоимость:</span>
-                        <span id="totalRes">0.00 ₽</span>
-                    </div>
+                    <div class="result-row discounted"><span>Сумма с учетом льгот:</span><span id="discountedBaseRes">0.00 ₽</span></div>
+                    <div class="result-row"><span>Ноу-хау (80% — без НДС):</span><span id="knowHowRes">0.00 ₽</span></div>
+                    <div class="result-row"><span>Облагаемая база (20%):</span><span id="taxableRes">0.00 ₽</span></div>
+                    <div class="result-row"><span>Сумма НДС:</span><span id="vatAmountRes">0.00 ₽</span></div>
+                    <div class="result-row total"><span>Итоговая стоимость:</span><span id="totalRes">0.00 ₽</span></div>
                 </div>
             </div>
-
             <div class="dash-card">
                 <h2>2. Параметры сети и этапы</h2>
-                
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Дата отсчёта</label>
-                        <input type="date" id="startDate" class="dash-input" value="2026-04-20" onchange="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Кол-во точек</label>
-                        <input type="number" id="pointCount" class="dash-input" value="10" min="1" oninput="calculateDashAll()">
-                    </div>
+                    <div class="form-group"><label>Дата отсчёта</label><input type="date" id="startDate" class="dash-input" value="2026-04-20" onchange="calculateDashAll()"></div>
+                    <div class="form-group"><label>Кол-во точек</label><input type="number" id="pointCount" class="dash-input" value="10" min="1" oninput="calculateDashAll()"></div>
                 </div>
-
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Город / Название</label>
-                        <input type="text" id="cityName" class="dash-input" value="Точка" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Номер партнёра</label>
-                        <input type="number" id="partnerNum" class="dash-input" value="1" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Дней между откр.</label>
-                        <input type="number" id="daysBetween" class="dash-input" value="140" oninput="calculateDashAll()">
-                    </div>
+                    <div class="form-group"><label>Город / Название</label><input type="text" id="cityName" class="dash-input" value="Точка" oninput="calculateDashAll()"></div>
+                    <div class="form-group"><label>Номер партнёра</label><input type="number" id="partnerNum" class="dash-input" value="1" oninput="calculateDashAll()"></div>
+                    <div class="form-group"><label>Дней между откр.</label><input type="number" id="daysBetween" class="dash-input" value="140" oninput="calculateDashAll()"></div>
                 </div>
-
                 <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
                 <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #555;">Длительность этапов (дней)</h3>
-
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Поиск + аренда</label>
-                        <input type="number" id="searchDays" class="dash-input" value="420" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Проект</label>
-                        <input type="number" id="projectDays" class="dash-input" value="30" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Стройка</label>
-                        <input type="number" id="buildDays" class="dash-input" value="120" oninput="calculateDashAll()">
-                    </div>
-                    <div class="form-group">
-                        <label>Открытие</label>
-                        <input type="number" id="openDays" class="dash-input" value="14" oninput="calculateDashAll()">
-                    </div>
+                    <div class="form-group"><label>Поиск + аренда</label><input type="number" id="searchDays" class="dash-input" value="420" oninput="calculateDashAll()"></div>
+                    <div class="form-group"><label>Проект</label><input type="number" id="projectDays" class="dash-input" value="30" oninput="calculateDashAll()"></div>
+                    <div class="form-group"><label>Стройка</label><input type="number" id="buildDays" class="dash-input" value="120" oninput="calculateDashAll()"></div>
+                    <div class="form-group"><label>Открытие</label><input type="number" id="openDays" class="dash-input" value="14" oninput="calculateDashAll()"></div>
                 </div>
-                
-                <div class="header-metric">
-                    <h3>Срок покрытия города (лет)</h3>
-                    <div class="value" id="coverageResult">0,00</div>
-                </div>
+                <div class="header-metric"><h3>Срок покрытия города (лет)</h3><div class="value" id="coverageResult">0,00</div></div>
             </div>
         </div>
-
         <div class="dash-card full-width">
             <h2>График открытий</h2>
-            <div class="dash-table-container">
-                <table class="dash-table">
-                    <thead>
-                        <tr>
-                            <th>Точка</th>
-                            <th>Согласование Локации</th>
-                            <th>Проектирование</th>
-                            <th>Строительство</th>
-                            <th>Открытие</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resultsBody"></tbody>
-                </table>
-            </div>
+            <div class="dash-table-container"><table class="dash-table"><thead><tr><th>Точка</th><th>Согласование Локации</th><th>Проектирование</th><th>Строительство</th><th>Открытие</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
         </div>
-
     </div>
 </div>
 
 <div id="calculator-page" class="page">
     <div class="page-container wide">
         <div class="calculator-card">
-            
             <div class="tabs">
                 <button class="calc-tab-btn active" data-calctab="manager">📋 Менеджер (допы 3.5%)</button>
                 <button class="calc-tab-btn" data-calctab="lead">⭐ Ведущий менеджер (допы 3.8%)</button>
             </div>
-
             <div id="managerTab" class="calc-tab-content active-tab">
                 <h2 class="calc-card-header">🧑‍💼 Менеджер — премии за роботов и монтаж</h2>
-                <div class="desc">🔹 % с доп. оборудования: 3,5% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж по фиксированной шкале</div>
-                
+                <div class="desc">🔹 % с доп. оборудования: 3,5%</div>
                 <div class="fixed-fields">
-                    <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-manager" placeholder="Оклад" value="0" step="any"></div>
-                    <div class="extra-field"><label>🛠️ Стоимость доп. оборудования</label><input type="number" class="extra-manager" placeholder="Сумма" value="0" step="any"></div>
+                    <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-manager" value="0"></div>
+                    <div class="extra-field"><label>🛠️ Стоимость доп. оборудования</label><input type="number" class="extra-manager" value="0"></div>
                     <div class="info-cards">
                         <div class="salary-card"><span>Оклад</span><div class="salary-amount" id="managerSalaryDisplay">0.00 ₽</div></div>
                         <div class="extra-card"><span>Премия за допы (3.5%)</span><div class="extra-amount" id="managerExtraDisplay">0.00 ₽</div></div>
                     </div>
                 </div>
-
                 <div class="table-header-tools">
                     <div class="btn-group">
                         <button class="add-robot-btn" id="addManagerRobot">➕ Добавить робота</button>
@@ -1017,33 +915,20 @@
                     </div>
                     <div class="robot-counter" id="managerCounter">Роботов: 1 / 15</div>
                 </div>
-                <div class="table-wrapper">
-                    <table class="robot-table" id="managerTable">
-                        <thead>
-                            <tr><th>Robot + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия (сумма × %)</th><th></th></tr>
-                        </thead>
-                        <tbody id="managerTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="summary-panel">
-                    <div>✨ ИТОГОВАЯ ВЫПЛАТА:</div>
-                    <div class="total-box">💰 <span id="managerTotal">0.00</span></div>
-                </div>
+                <div class="table-wrapper"><table class="robot-table" id="managerTable"><thead><tr><th>Робот + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия</th><th></th></tr></thead><tbody id="managerTableBody"></tbody></table></div>
+                <div class="summary-panel"><div>✨ ИТОГОВАЯ ВЫПЛАТА:</div><div class="total-box">💰 <span id="managerTotal">0.00</span></div></div>
             </div>
-
             <div id="leadTab" class="calc-tab-content">
                 <h2 class="calc-card-header">⭐ Ведущий менеджер — премии за роботов и монтаж</h2>
-                <div class="desc">🔹 % с доп. оборудования: 3,8% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж по шкале ТЗ</div>
-                
+                <div class="desc">🔹 % с доп. оборудования: 3,8%</div>
                 <div class="fixed-fields">
-                    <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-lead" placeholder="Оклад" value="0" step="any"></div>
-                    <div class="extra-field"><label>🛠️ Стоимость доп. оборудования</label><input type="number" class="extra-lead" placeholder="Сумма" value="0" step="any"></div>
+                    <div class="salary-field"><label>💰 Оклад (₽)</label><input type="number" class="salary-lead" value="0"></div>
+                    <div class="extra-field"><label>🛠️ Стоимость доп. оборудования</label><input type="number" class="extra-lead" value="0"></div>
                     <div class="info-cards">
                         <div class="salary-card"><span>Оклад</span><div class="salary-amount" id="leadSalaryDisplay">0.00 ₽</div></div>
                         <div class="extra-card"><span>Премия за допы (3.8%)</span><div class="extra-amount" id="leadExtraDisplay">0.00 ₽</div></div>
                     </div>
                 </div>
-
                 <div class="table-header-tools">
                     <div class="btn-group">
                         <button class="add-robot-btn" id="addLeadRobot">➕ Добавить робота</button>
@@ -1052,18 +937,8 @@
                     </div>
                     <div class="robot-counter" id="leadCounter">Роботов: 1 / 15</div>
                 </div>
-                <div class="table-wrapper">
-                    <table class="robot-table" id="leadTable">
-                        <thead>
-                            <tr><th>Робот + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия (сумма × %)</th><th></th></tr>
-                        </thead>
-                        <tbody id="leadTableBody"></tbody>
-                    </table>
-                </div>
-                <div class="summary-panel">
-                    <div>✨ ИТОГОВАЯ ВЫПЛАТА:</div>
-                    <div class="total-box">💰 <span id="leadTotal">0.00</span></div>
-                </div>
+                <div class="table-wrapper"><table class="robot-table" id="leadTable"><thead><tr><th>Робот + монтаж</th><th>💰 Стоимость робота</th><th>🔧 Стоимость монтажа</th><th>📈 % от продажи</th><th>🏆 Премия</th><th></th></tr></thead><tbody id="leadTableBody"></tbody></table></div>
+                <div class="summary-panel"><div>✨ ИТОГОВАЯ ВЫПЛАТА:</div><div class="total-box">💰 <span id="leadTotal">0.00</span></div></div>
             </div>
         </div>
     </div>
@@ -1121,6 +996,7 @@
     /* =========================================================
        0. НАСТРОЙКА ОБЛАЧНОЙ БАЗЫ ДАННЫХ ДЛЯ КОМАНДЫ
        ========================================================= */
+    // Замените этот URL на вашу собственную ссылку Realtime Database из Firebase, когда создадите её.
     const FIREBASE_DB_URL = 'https://portal-franchise-default-rtdb.firebaseio.com/network_data.json';
 
     /* =========================================================
@@ -1160,25 +1036,8 @@
     });
 
     /* =========================================================
-       2. ЛОГИКА ДАШБОРДА ПАРТНЁРА (СТРАНИЦА 1) [СОХРАНЕНО]
+       2. ЛОГИКА ДАШБОРДА ПАРТНЁРА (СТРАНИЦА 1)
        ========================================================= */
-    function addDays(date, days) {
-        let result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-    }
-
-    function formatDate(dateObj) {
-        const d = String(dateObj.getDate()).padStart(2, '0');
-        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const y = dateObj.getFullYear();
-        return `${d}.${m}.${y}`;
-    }
-
-    const formatCurrency = (num) => {
-        return num.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₽';
-    };
-
     function calculateDashFee() {
         const originalPrice = parseFloat(document.getElementById('basePrice').value) || 0;
         const vatRate = parseFloat(document.getElementById('vatRate').value) || 0;
@@ -1258,32 +1117,12 @@
     }
 
     /* =========================================================
-       3. ЛОГИКА КАЛЬКУЛЯТОРА ПРЕМИЙ (СТРАНИЦА 2) [СОХРАНЕНО]
+       3. ЛОГИКА КАЛЬКУЛЯТОРА ПРЕМИЙ (СТРАНИЦА 2)
        ========================================================= */
     const MANAGER_ROBOT_PERCENTS = [0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95,1.05,1.05,1.05,1.1,1.1,1.1];
     const LEAD_ROBOT_PERCENTS   = [0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.2,1.2,1.2,1.2];
     const MAX_ROBOTS = 15;
     const EXTRA_PERCENT = { manager: 3.5, lead: 3.8 };
-
-    const managerTab = document.getElementById('managerTab');
-    const leadTab = document.getElementById('leadTab');
-    const calcTabBtns = document.querySelectorAll('.calc-tab-btn');
-    
-    function switchCalcTab(tabId) {
-        managerTab.classList.remove('active-tab');
-        leadTab.classList.remove('active-tab');
-        if (tabId === 'manager') managerTab.classList.add('active-tab');
-        else leadTab.classList.add('active-tab');
-        
-        calcTabBtns.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('data-calctab') === tabId) btn.classList.add('active');
-        });
-    }
-    
-    calcTabBtns.forEach(btn => {
-        btn.addEventListener('click', () => switchCalcTab(btn.getAttribute('data-calctab')));
-    });
 
     class RoleCalculator {
         constructor(role, tbodyId, counterId, totalSpanId, salaryDisplayId, extraDisplayId, addBtnId, resetBtnId, deleteAllBtnId, salaryInputSelector, extraInputSelector) {
@@ -1317,8 +1156,8 @@
             
             tr.innerHTML = `
                 <td class="robot-name-cell">🤖 Робот ${robotNumber} + монтаж</td>
-                <td><input type="number" placeholder="Цена робота" value="0" step="any" class="robot-price-input"></td>
-                <td><input type="number" placeholder="Монтаж" value="0" step="any" class="install-price-input"></td>
+                <td><input type="number" placeholder="Цена робота" value="0" class="robot-price-input"></td>
+                <td><input type="number" placeholder="Монтаж" value="0" class="install-price-input"></td>
                 <td class="percent-cell">${percentFormatted}</td>
                 <td><span class="premium-badge">0.00</span></td>
                 <td><button class="delete-row-btn">✖</button></td>
@@ -1423,7 +1262,7 @@
     }
 
     /* =========================================================
-       4. ЛОГИКА ВКЛАДКИ МОДЕЛИРОВАНИЯ СЕТИ (ПЛАН / ФАКТ)
+       4. ЛОГИКА СИМУЛЯТОРА СЕТИ (ПЛАН / ФАКТ) С ЗАЩИТОЙ ОТ ПОТЕРЬ
        ========================================================= */
     const netMonths = [];
     for (let y = 2025; y <= 2030; y++) {
@@ -1439,50 +1278,69 @@
     let netCurrentWashes = 0; 
     let netOpenYearsState = new Set();
 
-    // Загрузка структуры данных (Локально ИЛИ Облако)
+    // ИСПРАВЛЕНО: Безопасный алгоритм инициализации. Данные локальной памяти больше никогда не затираются.
     function initNetworkData() {
         updateSyncStatus('Проверка связи...', '#475569');
+        const isDefaultUrl = FIREBASE_DB_URL.includes('portal-franchise-default-rtdb');
         
-        if (FIREBASE_DB_URL && FIREBASE_DB_URL !== '') {
+        if (FIREBASE_DB_URL && FIREBASE_DB_URL !== '' && !isDefaultUrl) {
             fetch(FIREBASE_DB_URL)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error('Ошибка подключения к облаку');
+                    return res.json();
+                })
                 .then(cloudData => {
-                    // ИСПРАВЛЕНО: Проверяем, что облачные данные существуют и массивы имеют правильную длину 72 месяца
                     if (cloudData && cloudData.pOpen && cloudData.pOpen.length === netT) {
                         applyExtractedData(cloudData);
-                        updateSyncStatus('● База данных подключена (Облако)', '#10b981');
+                        updateSyncStatus('● Синхронизировано с Облаком БД', '#10b981');
                     } else {
-                        // Если база пустая (null) - инициализируем базовыми цифрами и отправляем их обратно
-                        generateDefaultTemplate();
-                        saveAndSyncNetwork(); 
-                        updateSyncStatus('● Инициализация: Загружен стартовый шаблон сети', '#10b981');
-                        refreshNetworkUI();
+                        // Если в облаке пусто - проверяем сначала локальную память браузера!
+                        const stored = localStorage.getItem('net_plan_openings');
+                        if (stored && JSON.parse(stored).length === netT) {
+                            loadFromLocalFallback('Облако БД было пустым. Данные восстановлены из памяти браузера и отправлены в облако.');
+                            saveAndSyncNetwork(); 
+                        } else {
+                            generateDefaultTemplate();
+                            saveAndSyncNetwork(); 
+                            updateSyncStatus('● Сформирован стартовый шаблон сети', '#10b981');
+                            refreshNetworkUI();
+                        }
                     }
                 })
                 .catch(err => {
-                    console.error('Ошибка Firebase, переход на LocalStorage:', err);
-                    loadFromLocalFallback('Ошибка сети. Локальный режим');
+                    console.error('Ошибка БД, подключаем локальный бэкап:', err);
+                    loadFromLocalFallback('Режим локального бэкапа (Ошибка сети)');
                 });
         } else {
-            loadFromLocalFallback('Автономный режим (Без БД)');
+            // Если ссылка стандартная - работаем в изолированном безопасном режиме
+            loadFromLocalFallback(isDefaultUrl ? '⚠️ Данные хранятся локально! Укажите вашу личную ссылку на Firebase в скрипте.' : 'Автономный режим (Без БД)');
         }
     }
 
     function loadFromLocalFallback(msg) {
         const stored = localStorage.getItem('net_plan_openings');
-        if (stored && JSON.parse(stored).length === netT) {
-            netPlanOpenings = JSON.parse(localStorage.getItem('net_plan_openings'));
-            netPlanConstr = JSON.parse(localStorage.getItem('net_plan_constr'));
-            netPlanDesign = JSON.parse(localStorage.getItem('net_plan_design'));
-            netPlanLocations = JSON.parse(localStorage.getItem('net_plan_locations'));
-            netFactOpenings = JSON.parse(localStorage.getItem('net_fact_openings'));
-            netFactConstr = JSON.parse(localStorage.getItem('net_fact_constr'));
-            netFactDesign = JSON.parse(localStorage.getItem('net_fact_design'));
-            netFactLocations = JSON.parse(localStorage.getItem('net_fact_locations'));
-            netCurrentWashes = parseInt(localStorage.getItem('net_current_washes')) || 0;
-        } else {
-            generateDefaultTemplate();
+        if (stored) {
+            try {
+                const check = JSON.parse(stored);
+                if (check && check.length === netT) {
+                    netPlanOpenings = JSON.parse(localStorage.getItem('net_plan_openings'));
+                    netPlanConstr = JSON.parse(localStorage.getItem('net_plan_constr'));
+                    netPlanDesign = JSON.parse(localStorage.getItem('net_plan_design'));
+                    netPlanLocations = JSON.parse(localStorage.getItem('net_plan_locations'));
+                    netFactOpenings = JSON.parse(localStorage.getItem('net_fact_openings'));
+                    netFactConstr = JSON.parse(localStorage.getItem('net_fact_constr'));
+                    netFactDesign = JSON.parse(localStorage.getItem('net_fact_design'));
+                    netFactLocations = JSON.parse(localStorage.getItem('net_fact_locations'));
+                    netCurrentWashes = parseInt(localStorage.getItem('net_current_washes')) || 0;
+                    
+                    document.querySelectorAll('.net-global-washes-input').forEach(inp => inp.value = netCurrentWashes);
+                    updateSyncStatus(msg, '#f59e0b');
+                    refreshNetworkUI();
+                    return;
+                }
+            } catch(e) { console.error('Ошибка парсинга бэкапа', e); }
         }
+        generateDefaultTemplate();
         document.querySelectorAll('.net-global-washes-input').forEach(inp => inp.value = netCurrentWashes);
         updateSyncStatus(msg, '#f59e0b');
         refreshNetworkUI();
@@ -1537,7 +1395,8 @@
         localStorage.setItem('net_fact_locations', JSON.stringify(netFactLocations));
         localStorage.setItem('net_current_washes', netCurrentWashes);
 
-        if (FIREBASE_DB_URL && FIREBASE_DB_URL !== '') {
+        const isDefaultUrl = FIREBASE_DB_URL.includes('portal-franchise-default-rtdb');
+        if (FIREBASE_DB_URL && FIREBASE_DB_URL !== '' && !isDefaultUrl) {
             const dump = {
                 pOpen: netPlanOpenings, pCon: netPlanConstr, pDes: netPlanDesign, pLoc: netPlanLocations,
                 fOpen: netFactOpenings, fCon: netFactConstr, fDes: netFactDesign, fLoc: netFactLocations,
@@ -1549,7 +1408,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dump)
             })
-            .then(() => updateSyncStatus('● Изменения сохранены в облаке', '#10b981'))
+            .then(() => updateSyncStatus('● Изменения синхронизированы в облаке', '#10b981'))
             .catch(err => {
                 console.error('Ошибка отправки в БД:', err);
                 updateSyncStatus('⚠️ Ошибка автосохранения в сеть', '#ef4444');
@@ -1802,7 +1661,6 @@
         const idx = parseInt(row.getAttribute('data-netidx'));
         if (isNaN(idx)) return;
         
-        // ИСПРАВЛЕНО: Устранена опечатка в имени переменной массива стройки
         if (inp.classList.contains('net-f-loc')) netFactLocations[idx] = parseInt(inp.value) || 0;
         if (inp.classList.contains('net-f-des')) netFactDesign[idx] = parseInt(inp.value) || 0;
         if (inp.classList.contains('net-f-con')) netFactConstr[idx] = parseInt(inp.value) || 0;
@@ -1873,7 +1731,6 @@
                 margin: { t: 50, l: 50, r: 30, b: 70 },
                 annotations: activeAnnos
             };
-            
             Plotly.react(divId, traces, layout);
             bindNetworkLegendClick(divId, allAnnos);
         }
@@ -1916,23 +1773,18 @@
        5. ЗАПУСК И ИНИЦИАЛИЗАЦИЯ ВСЕХ СИСТЕМ (WINDOW.ONLOAD)
        ========================================================= */
     window.onload = () => {
-        // 1. Старый дашборд расчётов сроков покрытий и взносов
         calculateDashAll();
 
-        // 2. Старые калькуляторы окладно-премиальной части менеджеров
         new RoleCalculator('manager', 'managerTableBody', 'managerCounter', 'managerTotal', 'managerSalaryDisplay', 'managerExtraDisplay', 'addManagerRobot', 'resetManagerPrices', 'deleteManagerAll', '.salary-manager', '.extra-manager');
         new RoleCalculator('lead', 'leadTableBody', 'leadCounter', 'leadTotal', 'leadSalaryDisplay', 'leadExtraDisplay', 'addLeadRobot', 'resetLeadPrices', 'deleteLeadAll', '.salary-lead', '.extra-lead');
 
-        // 3. Подключение базы данных и отрисовка симулятора сети
         initNetworkData();
         initNetworkSubTabs();
 
-        // Слушатели сквозного инпута базового объема сети
         document.querySelectorAll('.net-global-washes-input').forEach(inp => {
             inp.addEventListener('input', (e) => syncGlobalWashes(e.target.value));
         });
 
-        // Кнопка принудительного обновления из облака (если коллеги внесли правки)
         document.getElementById('netManualRefreshBtn').onclick = () => {
             initNetworkData();
         };
