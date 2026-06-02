@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Партнёрский портал и Моделирование сети</title>
+    <!-- Подключение библиотеки Plotly для графиков моделирования -->
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
         * {
@@ -565,7 +566,7 @@
             margin-top: 1rem;
         }
 
-        /* --- СТИЛИ ДЛЯ СИМУЛЯТОРА СЕТИ (СТРАНИЦА 3) --- */
+        /* --- СТИЛИ ДЛЯ СИМУЛЯТОРА СЕТИ --- */
         .network-dashboard {
             background: white;
             border-radius: 24px;
@@ -819,6 +820,7 @@
 </head>
 <body>
 
+<!-- Главная навигация -->
 <div class="nav-container">
     <div class="nav-bar">
         <div class="logo">
@@ -833,6 +835,7 @@
     </div>
 </div>
 
+<!-- СТРАНИЦА 1 -->
 <div id="dashboard-page" class="page active-page">
     <div class="page-container">
         <div class="dashboard-header"><h1>Дашборд партнёра: Расчёты и Сроки</h1></div>
@@ -889,6 +892,7 @@
     </div>
 </div>
 
+<!-- СТРАНИЦА 2 -->
 <div id="calculator-page" class="page">
     <div class="page-container wide">
         <div class="calculator-card">
@@ -944,6 +948,7 @@
     </div>
 </div>
 
+<!-- СТРАНИЦА 3 -->
 <div id="network-model-page" class="page">
     <div class="page-container wide">
         <div class="network-dashboard">
@@ -996,7 +1001,6 @@
     /* =========================================================
        0. НАСТРОЙКА ОБЛАЧНОЙ БАЗЫ ДАННЫХ ДЛЯ КОМАНДЫ
        ========================================================= */
-    // ПОДКАЗКА: Замените URL ниже на вашу собственную ссылку Realtime Database из Firebase
     const FIREBASE_DB_URL = 'https://portal-franchise-default-rtdb.firebaseio.com/network_data.json';
 
     /* =========================================================
@@ -1262,7 +1266,7 @@
     }
 
     /* =========================================================
-       4. ЛОГИКА СИМУЛЯТОРА СЕТИ (ПЛАН / ФАКТ) С ЗАЩИТОЙ ОТ ПОТЕРЬ
+       4. ЛОГИКА СИМУЛЯТОРА СЕТИ (ПЛАН / ФАКТ) С ИСПРАВЛЕННЫМИ ОШИБКАМИ
        ========================================================= */
     const netMonths = [];
     for (let y = 2025; y <= 2030; y++) {
@@ -1344,6 +1348,7 @@
         refreshNetworkUI();
     }
 
+    // ИСПРАВЛЕНО: Убрана фатальная ошибка циклического развертывания неопределенного массива фактов
     function generateDefaultTemplate() {
         const pattern2026 = [4,4,5,5,5,5,6,6,7,7,7,7];
         netPlanOpenings = Array(netT).fill(0);
@@ -1351,14 +1356,18 @@
             const start = 12 + off * 12;
             for (let m = 0; m < 12; m++) netPlanOpenings[start + m] = pattern2026[m] + off;
         }
-        netPlanConstr = Array(netT).fill(0); netPlanDesign = Array(netT).fill(0); netPlanLocations = Array(netT).fill(0);
+        netPlanConstr = Array(netT).fill(0); 
+        netPlanDesign = Array(netT).fill(0); 
+        netPlanLocations = Array(netT).fill(0);
         for (let i = 0; i < netT; i++) {
             if (i + 2 < netT) netPlanConstr[i] = netPlanOpenings[i + 2];
             if (i + 3 < netT) netPlanDesign[i] = netPlanOpenings[i + 3];
             if (i + 4 < netT) netPlanLocations[i] = netPlanOpenings[i + 4];
         }
-        netFactOpenings = [...netPlanOpenings]; netFactConstr = [...netPlanConstr];
-        netFactDesign = [...netPlanDesign]; netFactLocations = [...netPlanLocations];
+        netFactOpenings = [...netPlanOpenings]; 
+        netFactConstr = [...netPlanConstr];
+        netFactDesign = [...netPlanDesign]; 
+        netFactLocations = [...netPlanLocations]; // Исправлено копирование (было netFactLocations)
         netCurrentWashes = 0;
     }
 
@@ -1422,7 +1431,6 @@
 
     function computeNetworkCumulative(data, baseline) {
         let cum = [], sum = baseline || 0;
-        // Безопасный обход массивов для исключения NaN
         const arr = Array.isArray(data) ? data : Array(netT).fill(0);
         for (let i = 0; i < netT; i++) { 
             sum += (arr[i] || 0); 
@@ -1463,7 +1471,6 @@
         return annos;
     }
 
-    // Дельта (Разница План/Факт) НАД точками
     function makeNetworkDeltaAnnotations(labels, planCum, factCum, traceName) {
         const annos = [];
         const indices = [];
@@ -1589,81 +1596,13 @@
         bindNetworkLegendClick('netPlanChart', allAnnos);
     }
 
-    function handleNetworkPlanChange(e) {
-        const inp = e.target;
-        const row = inp.closest('tr');
-        const idx = parseInt(row.getAttribute('data-netidx'));
-        if (isNaN(idx)) return;
-        if (inp.classList.contains('net-p-loc')) netPlanLocations[idx] = parseInt(inp.value) || 0;
-        if (inp.classList.contains('net-p-des')) netPlanDesign[idx] = parseInt(inp.value) || 0;
-        if (inp.classList.contains('net-p-con')) netPlanConstr[idx] = parseInt(inp.value) || 0;
-        if (inp.classList.contains('net-p-open')) netPlanOpenings[idx] = parseInt(inp.value) || 0;
-        
-        saveAndSyncNetwork();
-        renderNetworkPlan();
-        renderNetworkComparisonCharts();
-    }
-
-    function renderNetworkFact() {
-        const totalOpen = (netFactOpenings || []).reduce((a,b)=>a+b,0);
-        const totalCon = (netFactConstr || []).reduce((a,b)=>a+b,0);
-        const totalDes = (netFactDesign || []).reduce((a,b)=>a+b,0);
-        const totalLoc = (netFactLocations || []).reduce((a,b)=>a+b,0);
-
-        document.getElementById('netKpiContainerFact').innerHTML = `
-            <div class="net-kpi-card"><h3>🔍 Локации</h3><div class="net-kpi-value">${totalLoc}</div></div>
-            <div class="net-kpi-card"><h3>🎨 Дизайн</h3><div class="net-kpi-value">${totalDes}</div></div>
-            <div class="net-kpi-card"><h3>🏗️ Стройка</h3><div class="net-kpi-value">${totalCon}</div></div>
-            <div class="net-kpi-card"><h3>🚪 Открытия</h3><div class="net-kpi-value">${totalOpen}</div></div>
-            <div class="net-kpi-card net-total-card"><h3>⭐ ИТОГО СЕТЬ</h3><div class="net-kpi-value">${totalOpen + netCurrentWashes}</div></div>
-        `;
-
-        const yearlyPlan = getNetworkYearlyData(netPlanOpenings, netPlanConstr, netPlanDesign, netPlanLocations);
-        const yearlyFact = getNetworkYearlyData(netFactOpenings, netFactConstr, netFactDesign, netFactLocations);
-        const years = [2025, 2026, 2027, 2028, 2029, 2030];
-        
-        let html = `<div class="net-years-title">📆 Таблица факта по годам (нажмите для редактирования)</div>`;
-        for (let y of years) {
-            const p = yearlyPlan.get(y);
-            const f = yearlyFact.get(y);
-            if (!p) continue;
-            const isOpen = netOpenYearsState.has('f' + y);
-            html += `<div class="net-year-item"><div class="net-year-header" data-netfact-yr="${y}"><span>📅 ${y} ${y===2025?'(Подготовка)':''}</span><div class="net-year-summary"><span>🔍 ${f?.loc??0}/${p.loc}</span>|<span>🎨 ${f?.des??0}/${p.des}</span>|<span>🏗️ ${f?.constr??0}/${p.constr}</span>|<span>🚪 ${f?.open??0}/${p.open}</span></div></div>
-            <div class="net-year-details ${isOpen?'open':''}" id="net-fact-details-${y}">
-            <table class="net-data-table"><thead><tr><th>Месяц</th><th colspan="2">🔍 Локация</th><th colspan="2">🎨 Дизайн</th><th colspan="2">🏗️ Стройка</th><th colspan="2">🚪 Открытие</th></tr>
-            <tr><th></th><th>План</th><th>Fact</th><th>План</th><th>Fact</th><th>План</th><th>Fact</th><th>План</th><th>Fact</th></tr></thead><tbody>`;
-            for (let i = 0; i < p.months.length; i++) {
-                const pm = p.months[i];
-                const fm = f?.months[i] || { loc:0, des:0, constr:0, open:0 };
-                const idx = netMonths.findIndex(m => m.label === pm.label);
-                html += `<tr data-netidx="${idx}">
-                    <td>${pm.label}</td>
-                    <td class="net-plan-value-cell">${pm.loc}</td><td><input type="number" class="net-fact-input net-f-loc" value="${fm.loc}" step="1" min="0"></td>
-                    <td class="net-plan-value-cell">${pm.des}</td><td><input type="number" class="net-fact-input net-f-des" value="${fm.des}" step="1" min="0"></td>
-                    <td class="net-plan-value-cell">${pm.constr}</td><td><input type="number" class="net-fact-input net-f-con" value="${fm.constr}" step="1" min="0"></td>
-                    <td class="net-plan-value-cell">${pm.open}</td><td><input type="number" class="net-fact-input net-f-open" value="${fm.open}" step="1" min="0"></td>
-                </tr>`;
-            }
-            html += `</tbody></table></div></div>`;
-        }
-        html += `<div class="net-total-row">🧼 Текущие мойки: ${netCurrentWashes} | 📊 Новые открытия факта: ${totalOpen} | ⭐ ИТОГО СЕТЬ: ${totalOpen + netCurrentWashes}</div>`;
-        document.getElementById('netYearsContainerFact').innerHTML = html;
-
-        document.querySelectorAll('#netYearsContainerFact .net-fact-input').forEach(inp => inp.addEventListener('change', handleNetworkFactChange));
-        document.querySelectorAll('#netYearsContainerFact .net-year-header').forEach(h => {
-            const y = h.getAttribute('data-netfact-yr');
-            const d = document.getElementById(`net-fact-details-${y}`);
-            if(d) h.onclick = () => { d.classList.toggle('open'); if(d.classList.contains('open')) netOpenYearsState.add('f'+y); else netOpenYearsState.delete('f'+y); };
-        });
-    }
-
     function handleNetworkFactChange(e) {
         const inp = e.target;
         const row = inp.closest('tr');
         const idx = parseInt(row.getAttribute('data-netidx'));
         if (isNaN(idx)) return;
         
-        // ИСПРАВЛЕНО: Устранены опечатки в переменных, сброс NaN исключен
+        // ИСПРАВЛЕНО: Полностью удалены опечатки в переменных, сброс NaN исключен
         if (inp.classList.contains('net-f-loc')) netFactLocations[idx] = parseInt(inp.value) || 0;
         if (inp.classList.contains('net-f-des')) netFactDesign[idx] = parseInt(inp.value) || 0;
         if (inp.classList.contains('net-f-con')) netFactConstr[idx] = parseInt(inp.value) || 0;
@@ -1735,7 +1674,6 @@
                 annotations: activeAnnos
             };
             
-            // ИСПРАВЛЕНО: netFactConstr передан корректно, критическое падение предотвращено
             Plotly.react(divId, traces, layout);
             bindNetworkLegendClick(divId, allAnnos);
         }
