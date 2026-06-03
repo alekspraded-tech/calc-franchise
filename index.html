@@ -2,10 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Партнёрский портал</title>
-    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -294,216 +292,7 @@
             white-space: nowrap;
         }
 
-        /* --- Стили для Моделирования Порталов (Вкладка Моделирование) --- */
-        .sub-portal {
-            color: #4a627a;
-            border-left: 4px solid #3b82f6;
-            padding-left: 12px;
-            margin: 8px 0 20px;
-            font-size: 0.85rem;
-        }
-        .moika-panel {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            background: #f1f5f9;
-            padding: 12px 20px;
-            border-radius: 40px;
-            width: fit-content;
-            flex-wrap: wrap;
-            border: 1px solid #cbdde6;
-        }
-        .moika-panel label {
-            font-weight: 700;
-            color: #1e2a3e;
-            font-size: 0.95rem;
-        }
-        .moika-panel input {
-            padding: 8px 16px;
-            font-size: 1rem;
-            width: 120px;
-            border-radius: 30px;
-            border: 1px solid #94a3b8;
-            text-align: center;
-            font-weight: 600;
-        }
-        .inner-tabs {
-            display: flex;
-            gap: 4px;
-            border-bottom: 2px solid #e2e8f0;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .inner-tab-btn {
-            background: none;
-            border: none;
-            padding: 10px 16px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #5b6e8c;
-            cursor: pointer;
-            border-radius: 30px 30px 0 0;
-            transition: all 0.2s;
-        }
-        .inner-tab-btn.active {
-            color: #2563eb;
-            background: #eff6ff;
-            border-bottom: 3px solid #2563eb;
-        }
-        .inner-tab-pane {
-            display: none;
-        }
-        .inner-tab-pane.active {
-            display: block;
-        }
-        .kpi-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .kpi-card {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            flex: 1;
-            min-width: 130px;
-            padding: 12px 12px;
-            border: 1px solid #e2edf2;
-            text-align: center;
-        }
-        .kpi-card h3 {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            color: #5b6e8c;
-            margin: 0 0 8px;
-        }
-        .kpi-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #0f172a;
-            line-height: 1;
-        }
-        .total-card {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            color: white;
-        }
-        .total-card .kpi-value {
-            color: #facc15;
-        }
-        .years-container {
-            margin: 20px 0 20px;
-            background: #f8fafc;
-            border-radius: 20px;
-            padding: 12px 14px;
-            border: 1px solid #e0edf2;
-        }
-        .years-title {
-            font-weight: 600;
-            margin-bottom: 12px;
-            font-size: 1rem;
-            color: #0c4e6e;
-        }
-        .year-item {
-            margin-bottom: 10px;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .year-header {
-            background: #e2e8f0;
-            border-radius: 12px;
-            padding: 10px 12px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-        .year-summary {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            font-size: 0.75rem;
-        }
-        .year-details {
-            display: none;
-            background: white;
-            border-radius: 12px;
-            padding: 10px;
-            margin-top: 4px;
-            border: 1px solid #e2e8f0;
-            overflow-x: auto;
-        }
-        .year-details.open {
-            display: block;
-        }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.7rem;
-            min-width: 600px;
-        }
-        .data-table th, .data-table td {
-            padding: 6px 4px;
-            border-bottom: 1px solid #e2e8f0;
-            text-align: center;
-        }
-        .fact-input {
-            width: 65px;
-            padding: 4px;
-            text-align: center;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 0.7rem;
-        }
-        .plan-value {
-            background: #f8fafc;
-            font-weight: 600;
-            color: #1e40af;
-        }
-        .charts-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            margin-top: 20px;
-        }
-        .chart-card {
-            background: #fff;
-            border-radius: 20px;
-            border: 1px solid #e9eef3;
-            padding: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            width: 100%;
-        }
-        .chart-title {
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        .chart-container {
-            height: 400px;
-            width: 100%;
-        }
-        .total-row {
-            margin-top: 12px;
-            font-size: 0.8rem;
-            background: #eef2ff;
-            padding: 8px 12px;
-            border-radius: 16px;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        /* --- Стили для Калькулятора Премий (Страница 3) --- */
+        /* --- Стили для Калькулятора Премий (Страница 2) --- */
         .calculator-card {
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(2px);
@@ -779,12 +568,12 @@
             .robot-price-input, .install-price-input { width: 85px; }
             .nav-bar { flex-direction: column; }
             .dash-top-row { flex-direction: column; }
-            .moika-panel { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
 <body>
 
+<!-- Главная навигация -->
 <div class="nav-container">
     <div class="nav-bar">
         <div class="logo">
@@ -793,12 +582,14 @@
         </div>
         <div class="nav-links">
             <button class="nav-btn active" data-page="dashboard">📊 Дашборд расчётов</button>
-            <button class="nav-btn" data-page="modelling">🚪 Моделирование порталов</button>
             <button class="nav-btn" data-page="calculator">💰 Калькулятор премии</button>
         </div>
     </div>
 </div>
 
+<!-- ==========================================
+     СТРАНИЦА 1: ДАШБОРД ПАРТНЁРА
+     ========================================== -->
 <div id="dashboard-page" class="page active-page">
     <div class="page-container">
         
@@ -937,55 +728,20 @@
     </div>
 </div>
 
-<div id="modelling-page" class="page">
-    <div class="page-container wide">
-        <div class="dash-card full-width" style="border-radius: 2rem; padding: 24px;">
-            <div class="dashboard-header" style="margin-bottom: 15px;">
-                <h1>🚪 Моделирование порталов</h1>
-                <div class="sub-portal">🔍 Локация → 🎨 Дизайн → 🏗️ Стройка → 🚪 Открытие (сдвиги: +4, +3, +2 месяца)</div>
-            </div>
-
-            <div class="moika-panel">
-                <label>🧼 Моек открыто:</label>
-                <input type="number" id="globalMoikaInput" value="0" step="1" min="0">
-            </div>
-
-            <div class="inner-tabs">
-                <button class="inner-tab-btn active" data-tab="plan">📊 План</button>
-                <button class="inner-tab-btn" data-tab="fact">📈 Факт (4 графика)</button>
-            </div>
-
-            <div id="plan-tab" class="inner-tab-pane active">
-                <div class="kpi-grid" id="kpiContainerPlan"></div>
-                <div id="yearsContainerPlan" class="years-container"></div>
-                <div class="chart-card"><div class="chart-title">📈 Накопление по плану</div><div id="planChart" class="chart-container"></div></div>
-            </div>
-
-            <div id="fact-tab" class="inner-tab-pane">
-                <div class="kpi-grid" id="kpiContainerFact"></div>
-                <div id="yearsContainerFact" class="years-container"></div>
-                <div class="charts-grid">
-                    <div class="chart-card"><div class="chart-title">🔍 Локации — план vs факт</div><div id="chartLocations" class="chart-container"></div></div>
-                    <div class="chart-card"><div class="chart-title">🎨 Дизайн — план vs факт</div><div id="chartDesign" class="chart-container"></div></div>
-                    <div class="chart-card"><div class="chart-title">🏗️ Стройка — план vs факт</div><div id="chartConstruction" class="chart-container"></div></div>
-                    <div class="chart-card"><div class="chart-title">🚪 Открытия — план vs факт</div><div id="chartOpenings" class="chart-container"></div></div>
-                </div>
-            </div>
-
-            <div class="footer-note" style="text-align: center; margin-top: 20px;">✅ Клик по легенде скрывает/показывает линию И её цифры. Графики адаптивны и масштабируются.</div>
-        </div>
-    </div>
-</div>
-
+<!-- ==========================================
+     СТРАНИЦА 2: КАЛЬКУЛЯТОР ПРЕМИЙ
+     ========================================== -->
 <div id="calculator-page" class="page">
     <div class="page-container wide">
         <div class="calculator-card">
             
+            <!-- Вкладки калькулятора -->
             <div class="tabs">
                 <button class="calc-tab-btn active" data-calctab="manager">📋 Менеджер (допы 3.5%)</button>
                 <button class="calc-tab-btn" data-calctab="lead">⭐ Ведущий менеджер (допы 3.8%)</button>
             </div>
 
+            <!-- Вкладка Менеджер -->
             <div id="managerTab" class="calc-tab-content active-tab">
                 <h2 class="calc-card-header">🧑‍💼 Менеджер — премии за роботов и монтаж</h2>
                 <div class="desc">🔹 % с доп. оборудования: 3,5% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж по фиксированной шкале (1→0.15%, 2→0.25% ... 15→1.1%)</div>
@@ -1021,6 +777,7 @@
                 </div>
             </div>
 
+            <!-- Вкладка Ведущий менеджер -->
             <div id="leadTab" class="calc-tab-content">
                 <h2 class="calc-card-header">⭐ Ведущий менеджер — премии за роботов и монтаж</h2>
                 <div class="desc">🔹 % с доп. оборудования: 3,8% &nbsp;|&nbsp; 🔹 Проценты за роботов + монтаж: 1→0.2%, 2→0.3% ... 15→1.2%</div>
@@ -1063,18 +820,10 @@
 
 <script>
     /* =========================================================
-       0. ИНТЕГРАЦИЯ С БАЗОЙ ДАННЫХ SUPABASE
-       ========================================================= */
-    const SUPABASE_URL = 'https://jqtznmrwxswbveugfsbv.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_dgku-4f9ltwjKH5_3YB0rA_x-fUVUUa';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    /* =========================================================
        1. ЛОГИКА ГЛАВНОЙ НАВИГАЦИИ (ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ)
        ========================================================= */
     const pages = {
         dashboard: document.getElementById('dashboard-page'),
-        modelling: document.getElementById('modelling-page'),
         calculator: document.getElementById('calculator-page')
     };
     const mainNavBtns = document.querySelectorAll('.nav-btn');
@@ -1091,11 +840,6 @@
                 btn.classList.add('active');
             }
         });
-
-        // Корректировка размеров графиков Plotly, если переключились на моделирование
-        if (pageId === 'modelling') {
-            setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 50);
-        }
     }
 
     mainNavBtns.forEach(btn => {
@@ -1206,417 +950,14 @@
 
 
     /* =========================================================
-       3. ЛОГИКА МОДЕЛИРОВАНИЯ ПОРТАЛОВ (СТРАНИЦА 2)
-       ========================================================= */
-    const months = [];
-    for (let y=2025; y<=2030; y++) {
-        for (let m=0; m<12; m++) {
-            const names = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
-            months.push({ year: y, monthIdx: m, label: `${names[m]} ${y}` });
-        }
-    }
-    const T = months.length;
-
-    const pattern2026 = [4,4,5,5,5,5,6,6,7,7,7,7];
-    const planOpenings = Array(T).fill(0);
-    for (let i=0; i<12; i++) planOpenings[i] = 0;
-    for (let off=0; off<5; off++) {
-        const start = 12 + off*12;
-        for (let m=0; m<12; m++) planOpenings[start+m] = pattern2026[m] + off;
-    }
-
-    const planConstr = Array(T).fill(0);
-    const planDesign = Array(T).fill(0);
-    const planLocations = Array(T).fill(0);
-    for (let i=0; i<T; i++) {
-        if (i+2 < T) planConstr[i] = planOpenings[i+2];
-        if (i+3 < T) planDesign[i] = planOpenings[i+3];
-        if (i+4 < T) planLocations[i] = planOpenings[i+4];
-    }
-
-    let factOpenings = [...planOpenings];
-    let factConstr = [...planConstr];
-    let factDesign = [...planDesign];
-    let factLocations = [...planLocations];
-
-    let globalMoika = 0;
-    let openYearsState = new Set();
-
-    // Загрузка данных моделирования из БД
-    async function loadModellingData() {
-        try {
-            const { data, error } = await supabase.from('dashboard_data').select('*').eq('id', 1).single();
-            if (data) {
-                if (data.fact_locations) factLocations = data.fact_locations;
-                if (data.fact_design) factDesign = data.fact_design;
-                if (data.fact_constr) factConstr = data.fact_constr;
-                if (data.fact_openings) factOpenings = data.fact_openings;
-                if (data.moika !== undefined) {
-                    globalMoika = data.moika;
-                    document.getElementById('globalMoikaInput').value = globalMoika;
-                }
-            }
-        } catch (e) { console.error('Ошибка получения данных из Supabase:', e); }
-    }
-
-    // Сохранение данных моделирования с дебаунсом в 1.5 сек
-    let saveTimeout;
-    function saveModellingData() {
-        clearTimeout(saveTimeout);
-        saveTimeout = setTimeout(async () => {
-            try {
-                await supabase.from('dashboard_data').upsert({
-                    id: 1,
-                    fact_locations: factLocations,
-                    fact_design: factDesign,
-                    fact_constr: factConstr,
-                    fact_openings: factOpenings,
-                    moika: globalMoika
-                });
-            } catch (e) { console.error('Ошибка записи в Supabase:', e); }
-        }, 1500);
-    }
-
-    function computeCumulative(data) {
-        let cum = [], sum = 0;
-        for (let i=0; i<T; i++) { sum += data[i]; cum.push(sum); }
-        return cum;
-    }
-
-    function addConstant(arr, val) {
-        return arr.map(x => x + val);
-    }
-
-    function getYearlyData(open, constr, design, loc) {
-        const map = new Map();
-        for (let i=0; i<T; i++) {
-            const y = months[i].year;
-            if (y<2025 || y>2030) continue;
-            if (!map.has(y)) map.set(y, { loc:0, des:0, constr:0, open:0, months:[] });
-            const d = map.get(y);
-            d.loc += loc[i];
-            d.des += design[i];
-            d.constr += constr[i];
-            d.open += open[i];
-            d.months.push({ label: months[i].label, loc: loc[i], des: design[i], constr: constr[i], open: open[i] });
-        }
-        return map;
-    }
-
-    function makeAnnotations(labels, data, offsetY, color, traceName) {
-        const annos = [];
-        const indices = [];
-        for (let i=0; i<T; i+=3) indices.push(i);
-        if ((T - 1) % 3 !== 0) indices.push(T - 1);
-
-        for (let i of indices) {
-            if (data[i] !== undefined) {
-                annos.push({
-                    x: labels[i], y: data[i], text: data[i].toString(),
-                    showarrow: true, arrowhead: 2, arrowsize: 0.5, arrowwidth: 1,
-                    arrowcolor: color, ax: 0, ay: offsetY,
-                    bgcolor: 'rgba(255,255,240,0.85)', bordercolor: color, borderwidth: 0.8,
-                    font: { size: 8, color: color },
-                    traceName: traceName
-                });
-            }
-        }
-        return annos;
-    }
-
-    function makeDeltaAnnotations(labels, planCum, factCum, traceName) {
-        const annos = [];
-        const indices = [];
-        for (let i=0; i<T; i+=3) indices.push(i);
-        if ((T - 1) % 3 !== 0) indices.push(T - 1);
-
-        for (let i of indices) {
-            if (planCum[i] !== undefined && factCum[i] !== undefined) {
-                const diff = factCum[i] - planCum[i];
-                const sign = diff >= 0 ? '+' : '';
-                const text = `<b>${sign}${diff}</b>`;
-                const color = diff >= 0 ? '#10b981' : '#ef4444';
-                
-                annos.push({
-                    x: labels[i], y: factCum[i], text: text,
-                    showarrow: false, ax: 0, ay: 14,
-                    font: { size: 8, color: color },
-                    bgcolor: 'rgba(255,255,255,0.95)', bordercolor: color, borderwidth: 1,
-                    traceName: traceName
-                });
-            }
-        }
-        return annos;
-    }
-
-    function bindLegendClick(divId, masterAnnotations) {
-        const el = document.getElementById(divId);
-        if (!el) return;
-        el.removeAllListeners && el.removeAllListeners('plotly_legendclick');
-        el.on('plotly_legendclick', function(data) {
-            const curveIdx = data.curveNumber;
-            const clickedTrace = data.data[curveIdx];
-            const nextVisible = (clickedTrace.visible === 'legendonly') ? true : 'legendonly';
-            
-            const visibleAnnos = masterAnnotations.filter(anno => {
-                const tIdx = data.data.findIndex(t => t.name === anno.traceName);
-                if (tIdx === curveIdx) return nextVisible === true;
-                return data.data[tIdx].visible !== 'legendonly';
-            });
-            
-            Plotly.update(divId, { visible: nextVisible }, { annotations: visibleAnnos }, [curveIdx]);
-            return false;
-        });
-    }
-
-    function renderModellingPlan() {
-        const totalOpen = planOpenings.reduce((a,b)=>a+b,0);
-        const totalCon = planConstr.reduce((a,b)=>a+b,0);
-        const totalDes = planDesign.reduce((a,b)=>a+b,0);
-        const totalLoc = planLocations.reduce((a,b)=>a+b,0);
-        document.getElementById('kpiContainerPlan').innerHTML = `
-            <div class="kpi-card"><h3>🔍 Локации</h3><div class="kpi-value">${totalLoc}</div></div>
-            <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
-            <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
-            <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
-            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + globalMoika}</div></div>
-        `;
-
-        const yearly = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
-        const years = [2025,2026,2027,2028,2029,2030];
-        let html = `<div class="years-title">📆 План по годам (нажмите)</div>`;
-        for (let y of years) {
-            const d = yearly.get(y);
-            if (!d) continue;
-            html += `<div class="year-item"><div class="year-header" data-year-plan="${y}"><span>📅 ${y} ${y===2025?'(Подготовка)':''}</span><div class="year-summary">🔍 ${d.loc} | 🎨 ${d.des} | 🏗️ ${d.constr} | 🚪 ${d.open}</div><span class="toggle-icon">▼</span></div><div class="year-details" id="plan-details-${y}"><table class="data-table"><thead><tr><th>Месяц</th><th>🔍</th><th>🎨</th><th>🏗️</th><th>🚪</th></tr></thead><tbody>`;
-            for (let m of d.months) html += `<tr><td>${m.label}</td><td>${m.loc}</td><td>${m.des}</td><td>${m.constr}</td><td>${m.open}</td></tr>`;
-            html += `</tbody></table></div></div>`;
-        }
-        html += `<div class="total-row">🧼 Открыто моек: ${globalMoika} | 📊 План порталов: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + globalMoika}</div>`;
-        document.getElementById('yearsContainerPlan').innerHTML = html;
-        for (let y of years) {
-            const h = document.querySelector(`.year-header[data-year-plan="${y}"]`);
-            const d = document.getElementById(`plan-details-${y}`);
-            if (h && d) h.onclick = (e) => { e.stopPropagation(); d.classList.toggle('open'); const ic = h.querySelector('.toggle-icon'); if(ic) ic.textContent = d.classList.contains('open') ? '▲' : '▼'; };
-        }
-
-        const labels = months.map(m=>m.label);
-        const cumL = computeCumulative(planLocations);
-        const cumD = computeCumulative(planDesign);
-        const cumC = computeCumulative(planConstr);
-        const cumO = addConstant(computeCumulative(planOpenings), globalMoika);
-        
-        const el = document.getElementById('planChart');
-        let currentVis = [true, true, true, true];
-        if (el && el.data && el.data.length === 4) {
-            currentVis = el.data.map(t => t.visible);
-        }
-
-        const traces = [
-            { x: labels, y: cumL, name: 'Локации', mode: 'lines+markers', line: { color: '#10b981', width: 2.5, dash: 'dash' }, marker: { size: 2 }, visible: currentVis[0] },
-            { x: labels, y: cumD, name: 'Дизайн', mode: 'lines+markers', line: { color: '#8b5cf6', width: 2.5, dash: 'dashdot' }, marker: { size: 2 }, visible: currentVis[1] },
-            { x: labels, y: cumC, name: 'Стройка', mode: 'lines+markers', line: { color: '#d97706', width: 2.5, dash: 'dot' }, marker: { size: 2 }, visible: currentVis[2] },
-            { x: labels, y: cumO, name: 'Открытия (+ Мойки)', mode: 'lines+markers', line: { color: '#0f5b7a', width: 3 }, marker: { size: 3 }, visible: currentVis[3] }
-        ];
-        
-        const allAnnotations = [
-            ...makeAnnotations(labels, cumL, -35, '#10b981', 'Локации'),
-            ...makeAnnotations(labels, cumD, 40, '#8b5cf6', 'Дизайн'),
-            ...makeAnnotations(labels, cumC, -40, '#d97706', 'Стройка'),
-            ...makeAnnotations(labels, cumO, 35, '#0f5b7a', 'Открытия (+ Мойки)')
-        ];
-
-        const activeAnnos = allAnnotations.filter(anno => {
-            const tIdx = traces.findIndex(t => t.name === anno.traceName);
-            return tIdx === -1 || traces[tIdx].visible !== 'legendonly';
-        });
-
-        const layout = {
-            xaxis: { tickangle: -45, tickvals: labels.filter((_,i)=>i%3===0), tickfont: { size: 8 } },
-            yaxis: { title: 'Накопленное количество' },
-            legend: { orientation: 'h', y: 1.05 },
-            margin: { t: 40, l: 50, r: 30, b: 70 },
-            annotations: activeAnnos
-        };
-        
-        Plotly.react('planChart', traces, layout, { responsive: true, displayModeBar: false });
-        bindLegendClick('planChart', allAnnotations);
-    }
-
-    function renderModellingFact() {
-        const totalOpen = factOpenings.reduce((a,b)=>a+b,0);
-        const totalCon = factConstr.reduce((a,b)=>a+b,0);
-        const totalDes = factDesign.reduce((a,b)=>a+b,0);
-        const totalLoc = factLocations.reduce((a,b)=>a+b,0);
-        document.getElementById('kpiContainerFact').innerHTML = `
-            <div class="kpi-card"><h3>🔍 Локации</h3><div class="kpi-value">${totalLoc}</div></div>
-            <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
-            <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
-            <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
-            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + globalMoika}</div></div>
-        `;
-
-        const yearlyPlan = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
-        const yearlyFact = getYearlyData(factOpenings, factConstr, factDesign, factLocations);
-        const years = [2025,2026,2027,2028,2029,2030];
-        let html = `<div class="years-title">📆 Факт по годам (нажмите, редактируйте)</div>`;
-        for (let y of years) {
-            const p = yearlyPlan.get(y);
-            const f = yearlyFact.get(y);
-            if (!p) continue;
-            const isOpen = openYearsState.has(y);
-            html += `<div class="year-item"><div class="year-header" data-year-fact="${y}"><span>📅 ${y} ${y===2025?'(Подготовка)':''}</span><div class="year-summary">🔍 ${f?.loc??0}/${p.loc} | 🎨 ${f?.des??0}/${p.des} | 🏗️ ${f?.constr??0}/${p.constr} | 🚪 ${f?.open??0}/${p.open}</div><span class="toggle-icon">${isOpen?'▲':'▼'}</span></div>
-            <div class="year-details ${isOpen?'open':''}" id="fact-details-${y}">
-            <table class="data-table"><thead><tr><th>Месяц</th><th colspan="2">🔍</th><th colspan="2">🎨</th><th colspan="2">🏗️</th><th colspan="2">🚪</th></tr>
-            <tr><th></th><th>План</th><th>Факт</th><th>План</th><th>Факт</th><th>План</th><th>Факт</th><th>План</th><th>Факт</th></tr></thead><tbody>`;
-            for (let i=0; i<p.months.length; i++) {
-                const pm = p.months[i];
-                const fm = f?.months[i] || { loc:0, des:0, constr:0, open:0 };
-                const idx = months.findIndex(m => m.label === pm.label);
-                html += `<tr data-idx="${idx}">
-                    <td>${pm.label}</td>
-                    <td class="plan-value">${pm.loc}</td><td><input type="number" class="fact-input fact-loc" value="${fm.loc}" step="1" min="0"></td>
-                    <td class="plan-value">${pm.des}</td><td><input type="number" class="fact-input fact-des" value="${fm.des}" step="1" min="0"></td>
-                    <td class="plan-value">${pm.constr}</td><td><input type="number" class="fact-input fact-con" value="${fm.constr}" step="1" min="0"></td>
-                    <td class="plan-value">${pm.open}</td><td><input type="number" class="fact-input fact-open" value="${fm.open}" step="1" min="0"></td>
-                </tr>`;
-            }
-            html += `</tbody></table></div></div>`;
-        }
-        html += `<div class="total-row">🧼 Открыто моек: ${globalMoika} | 📊 Факт порталов: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + globalMoika}</div>`;
-        document.getElementById('yearsContainerFact').innerHTML = html;
-
-        document.querySelectorAll('#yearsContainerFact .fact-input').forEach(inp => inp.addEventListener('change', handleFactChange));
-        for (let y of years) {
-            const h = document.querySelector(`.year-header[data-year-fact="${y}"]`);
-            const d = document.getElementById(`fact-details-${y}`);
-            if (h && d) h.onclick = (e) => { e.stopPropagation(); d.classList.toggle('open'); const ic = h.querySelector('.toggle-icon'); if(ic) ic.textContent = d.classList.contains('open') ? '▲' : '▼'; if(d.classList.contains('open')) openYearsState.add(y); else openYearsState.delete(y); };
-        }
-    }
-
-    function handleFactChange(e) {
-        const inp = e.target;
-        const row = inp.closest('tr');
-        const idx = parseInt(row.dataset.idx);
-        if (isNaN(idx)) return;
-        if (inp.classList.contains('fact-loc')) factLocations[idx] = parseInt(inp.value) || 0;
-        if (inp.classList.contains('fact-des')) factDesign[idx] = parseInt(inp.value) || 0;
-        if (inp.classList.contains('fact-con')) factConstr[idx] = parseInt(inp.value) || 0;
-        if (inp.classList.contains('fact-open')) factOpenings[idx] = parseInt(inp.value) || 0;
-        
-        saveModellingData();
-        updateModellingFactSummaries();
-        renderModellingComparisonCharts();
-    }
-
-    function updateModellingFactSummaries() {
-        const totalOpen = factOpenings.reduce((a,b)=>a+b,0);
-        const totalCon = factConstr.reduce((a,b)=>a+b,0);
-        const totalDes = factDesign.reduce((a,b)=>a+b,0);
-        const totalLoc = factLocations.reduce((a,b)=>a+b,0);
-        document.getElementById('kpiContainerFact').innerHTML = `
-            <div class="kpi-card"><h3>🔍 Локации</h3><div class="kpi-value">${totalLoc}</div></div>
-            <div class="kpi-card"><h3>🎨 Дизайн</h3><div class="kpi-value">${totalDes}</div></div>
-            <div class="kpi-card"><h3>🏗️ Стройка</h3><div class="kpi-value">${totalCon}</div></div>
-            <div class="kpi-card"><h3>🚪 Открытия</h3><div class="kpi-value">${totalOpen}</div></div>
-            <div class="kpi-card total-card"><h3>⭐ ИТОГО</h3><div class="kpi-value">${totalOpen + globalMoika}</div></div>
-        `;
-        const yearlyPlan = getYearlyData(planOpenings, planConstr, planDesign, planLocations);
-        const yearlyFact = getYearlyData(factOpenings, factConstr, factDesign, factLocations);
-        for (let y of [2025,2026,2027,2028,2029,2030]) {
-            const p = yearlyPlan.get(y);
-            const f = yearlyFact.get(y);
-            if (!p) continue;
-            const hdr = document.querySelector(`.year-header[data-year-fact="${y}"]`);
-            if (hdr) {
-                const sum = hdr.querySelector('.year-summary');
-                if (sum) sum.innerHTML = `🔍 ${f?.loc??0}/${p.loc} | 🎨 ${f?.des??0}/${p.des} | 🏗️ ${f?.constr??0}/${p.constr} | 🚪 ${f?.open??0}/${p.open}`;
-            }
-        }
-        const tr = document.querySelector('#yearsContainerFact .total-row');
-        if (tr) tr.innerHTML = `🧼 Открыто моек: ${globalMoika} | 📊 Факт порталов: ${totalOpen} | ⭐ ИТОГО: ${totalOpen + globalMoika}`;
-    }
-
-    function renderModellingComparisonCharts() {
-        const labels = months.map(m=>m.label);
-        
-        function buildChart(divId, title, planCum, factCum, planColor, factColor) {
-            const el = document.getElementById(divId);
-            let currentVis = [true, true];
-            if (el && el.data && el.data.length === 2) {
-                currentVis = el.data.map(t => t.visible);
-            }
-
-            const traces = [
-                { x: labels, y: planCum, name: 'План', mode: 'lines+markers', line: { color: planColor, width: 3 }, marker: { size: 3 }, visible: currentVis[0] },
-                { x: labels, y: factCum, name: 'Факт', mode: 'lines+markers', line: { color: factColor, width: 3, dash: 'dot' }, marker: { size: 4, symbol: 'diamond' }, visible: currentVis[1] }
-            ];
-            
-            const allAnnotations = [
-                ...makeAnnotations(labels, planCum, -35, planColor, 'План'),
-                ...makeAnnotations(labels, factCum, 35, factColor, 'Факт'),
-                ...makeDeltaAnnotations(labels, planCum, factCum, 'Факт')
-            ];
-
-            const activeAnnos = allAnnotations.filter(anno => {
-                const tIdx = traces.findIndex(t => t.name === anno.traceName);
-                return tIdx === -1 || traces[tIdx].visible !== 'legendonly';
-            });
-
-            const layout = {
-                title: { text: title, font: { size: 12 } },
-                xaxis: { tickangle: -45, tickvals: labels.filter((_,i)=>i%3===0), tickfont: { size: 8 } },
-                yaxis: { title: 'Накопленное количество' },
-                legend: { orientation: 'h', y: 1.08, xanchor: 'center', x: 0.5 },
-                margin: { t: 50, l: 50, r: 30, b: 70 },
-                annotations: activeAnnos
-            };
-            
-            Plotly.react(divId, traces, layout, { responsive: true, displayModeBar: false });
-            bindLegendClick(divId, allAnnotations);
-        }
-
-        buildChart('chartLocations', '🔍 Локации — план vs факт', computeCumulative(planLocations), computeCumulative(factLocations), '#1e3a8a', '#f59e0b');
-        buildChart('chartDesign', '🎨 Дизайн — план vs факт', computeCumulative(planDesign), computeCumulative(factDesign), '#8b5cf6', '#f59e0b');
-        buildChart('chartConstruction', '🏗️ Стройка — план vs факт', computeCumulative(planConstr), computeCumulative(factConstr), '#d97706', '#9333ea');
-        buildChart('chartOpenings', '🚪 Открытия (+ Мойки) — план vs факт', 
-            addConstant(computeCumulative(planOpenings), globalMoika), 
-            addConstant(computeCumulative(factOpenings), globalMoika), 
-            '#0f5b7a', '#f59e0b');
-    }
-
-    function updateModellingAll() {
-        globalMoika = parseInt(document.getElementById('globalMoikaInput').value) || 0;
-        renderModellingPlan();
-        renderModellingFact();
-        renderModellingComparisonCharts();
-    }
-
-    function initModellingTabs() {
-        const btns = document.querySelectorAll('.inner-tab-btn');
-        btns.forEach(btn => {
-            btn.onclick = () => {
-                const tab = btn.dataset.tab;
-                document.querySelectorAll('.inner-tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.inner-tab-pane').forEach(p => p.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(`${tab}-tab`).classList.add('active');
-                if (tab === 'fact') renderModellingComparisonCharts();
-                window.dispatchEvent(new Event('resize'));
-            };
-        });
-    }
-
-
-    /* =========================================================
-       4. ЛОГИКА КАЛЬКУЛЯТОРА ПРЕМИЙ (СТРАНИЦА 3)
+       3. ЛОГИКА КАЛЬКУЛЯТОРА ПРЕМИЙ (СТРАНИЦА 2)
        ========================================================= */
     const MANAGER_ROBOT_PERCENTS = [0.15,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95,1.05,1.05,1.05,1.1,1.1,1.1];
     const LEAD_ROBOT_PERCENTS   = [0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.2,1.2,1.2,1.2];
     const MAX_ROBOTS = 15;
     const EXTRA_PERCENT = { manager: 3.5, lead: 3.8 };
 
-    // Управление внутренними вкладками калькулятора премий
+    // Управление внутренними вкладками калькулятора (Менеджер / Ведущий)
     const managerTab = document.getElementById('managerTab');
     const leadTab = document.getElementById('leadTab');
     const calcTabBtns = document.querySelectorAll('.calc-tab-btn');
@@ -1637,6 +978,7 @@
         btn.addEventListener('click', () => switchCalcTab(btn.getAttribute('data-calctab')));
     });
 
+    // Класс калькулятора (один код для обеих вкладок)
     class RoleCalculator {
         constructor(role, tbodyId, counterId, totalSpanId, salaryDisplayId, extraDisplayId, addBtnId, resetBtnId, deleteAllBtnId, salaryInputSelector, extraInputSelector) {
             this.role = role;
@@ -1779,25 +1121,13 @@
 
 
     /* =========================================================
-       5. ЗАПУСК ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+       4. ЗАПУСК ВСЕХ СКРИПТОВ ПРИ ЗАГРУЗКЕ
        ========================================================= */
     window.onload = () => {
-        // Инициализация первой страницы
+        // Инициализация дашборда
         calculateDashAll();
 
-        // Слушатель для инпута моек в моделировании
-        document.getElementById('globalMoikaInput').addEventListener('input', () => {
-            updateModellingAll();
-            saveModellingData();
-        });
-
-        // Загрузка сохраненных данных моделирования из БД и инициализация графиков
-        loadModellingData().finally(() => {
-            initModellingTabs();
-            updateModellingAll();
-        });
-
-        // Инициализация калькуляторов премий на третьей странице
+        // Инициализация калькуляторов премий
         new RoleCalculator('manager', 'managerTableBody', 'managerCounter', 'managerTotal', 'managerSalaryDisplay', 'managerExtraDisplay', 'addManagerRobot', 'resetManagerPrices', 'deleteManagerAll', '.salary-manager', '.extra-manager');
         new RoleCalculator('lead', 'leadTableBody', 'leadCounter', 'leadTotal', 'leadSalaryDisplay', 'leadExtraDisplay', 'addLeadRobot', 'resetLeadPrices', 'deleteLeadAll', '.salary-lead', '.extra-lead');
     };
